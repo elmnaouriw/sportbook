@@ -407,6 +407,7 @@ function observeCounters() {
   document.querySelectorAll('[data-target]').forEach(c => obs.observe(c));
 }
 
+let editingSessionId = null;
 let toastTimer;
 function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
@@ -456,7 +457,10 @@ async function loadAdminSessions() {
           <div class="admin-session-title">${escapeHTML(s.title)}</div>
           <div class="admin-session-meta">${escapeHTML(s.instructor)} — ${formatDate(s.session_date)} at ${formatTime(s.start_time)} — ${s.available_spots}/${s.total_spots} spots</div>
         </div>
-        <button class="btn-admin-delete" onclick="adminDeleteSession(${s.id}, this)">Supprimer</button>
+        <div class="admin-session-actions">
+          <button class="btn-admin-edit" onclick="adminEditSession(${s.id})">Modifier</button>
+          <button class="btn-admin-delete" onclick="adminDeleteSession(${s.id}, this)">Supprimer</button>
+        </div>
       </div>
     `).join('');
   } catch {
@@ -465,6 +469,7 @@ async function loadAdminSessions() {
 }
 
 async function adminCreateSession() {
+  if (editingSessionId) return;
   const errCard = document.getElementById('admin-api-error');
   errCard.style.display = 'none';
 
@@ -521,6 +526,188 @@ async function adminDeleteSession(id, btn) {
   } catch (err) {
     showToast('❌ ' + err.message, 'error');
     btn.textContent = 'Supprimer';
+    btn.disabled = false;
+  }
+}
+
+async function adminEditSession(id) {
+  try {
+    const session = await apiFetch('/sessions/' + id);
+    document.getElementById('admin-title').value = session.title || '';
+    document.getElementById('admin-sport').value = session.sport_id || '';
+    document.getElementById('admin-instructor').value = session.instructor || '';
+    document.getElementById('admin-date').value = session.session_date ? session.session_date.split('T')[0] : '';
+    document.getElementById('admin-time').value = session.start_time || '';
+    document.getElementById('admin-duration').value = session.duration_min || '';
+    document.getElementById('admin-location').value = session.location || '';
+    document.getElementById('admin-spots').value = session.total_spots || '';
+
+    editingSessionId = id;
+    document.getElementById('admin-create-btn').textContent = 'Update Session';
+    document.getElementById('admin-create-btn').onclick = adminUpdateSession;
+    document.getElementById('admin-cancel-btn').style.display = 'inline-block';
+    document.getElementById('admin-api-error').style.display = 'none';
+    document.getElementById('admin-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (err) {
+    showToast('❌ ' + err.message, 'error');
+  }
+}
+
+async function adminUpdateSession() {
+  const errCard = document.getElementById('admin-api-error');
+  errCard.style.display = 'none';
+
+  const title = document.getElementById('admin-title').value.trim();
+  const sport_id = parseInt(document.getElementById('admin-sport').value);
+  const instructor = document.getElementById('admin-instructor').value.trim();
+  const date = document.getElementById('admin-date').value;
+  const time = document.getElementById('admin-time').value;
+  const duration = parseInt(document.getElementById('admin-duration').value);
+  const location = document.getElementById('admin-location').value.trim();
+  const total_spots = parseInt(document.getElementById('admin-spots').value);
+
+  if (!title || !instructor || !date || !time || !duration || !location || !total_spots) {
+    errCard.textContent = '❌ All fields are required';
+    errCard.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('admin-create-btn');
+  btn.textContent = '⏳ Updating...';
+  btn.disabled = true;
+
+  try {
+    await apiFetch('/sessions/' + editingSessionId, {
+      method: 'PUT',
+      body: JSON.stringify({ title, sport_id, instructor, date, time, duration, location, total_spots })
+    });
+    showToast('✅ Session updated!', 'success');
+    adminCancelEdit();
+    loadAdminSessions();
+  } catch (err) {
+    errCard.textContent = '❌ ' + err.message;
+    errCard.style.display = 'block';
+  } finally {
+    btn.textContent = 'Update Session';
+    btn.disabled = false;
+  }
+}
+
+function adminCancelEdit() {
+  editingSessionId = null;
+  document.getElementById('admin-title').value = '';
+  document.getElementById('admin-instructor').value = '';
+  document.getElementById('admin-date').value = '';
+  document.getElementById('admin-time').value = '';
+  document.getElementById('admin-duration').value = '';
+  document.getElementById('admin-location').value = '';
+  document.getElementById('admin-spots').value = '';
+  document.getElementById('admin-sport').value = '1';
+  document.getElementById('admin-create-btn').textContent = '+ Create Session';
+  document.getElementById('admin-create-btn').onclick = adminCreateSession;
+  document.getElementById('admin-cancel-btn').style.display = 'none';
+  document.getElementById('admin-api-error').style.display = 'none';
+}
+
+// ── ANNONCES FUNCTIONS ──
+
+function showAnnouncementsPage() {
+  showPage('announcements');
+  hideNewAnnouncementForm();
+  loadAnnouncements();
+}
+
+function showNewAnnouncementForm() {
+  document.getElementById('announcement-form').style.display = 'block';
+  document.getElementById('announcement-form-title').textContent = 'Créer une annonce';
+  document.getElementById('ann-title').value = '';
+  document.getElementById('ann-content').value = '';
+  document.getElementById('ann-submit-btn').textContent = 'Publier';
+  document.getElementById('ann-submit-btn').onclick = submitAnnouncement;
+  document.getElementById('ann-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function hideNewAnnouncementForm() {
+  document.getElementById('announcement-form').style.display = 'none';
+}
+
+async function loadAnnouncements() {
+  const grid = document.getElementById('announcements-grid');
+  grid.innerHTML = `
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:100%"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:100%"></div></div>`;
+  try {
+    const data = await apiFetch('/announcements');
+    const announcements = data.announcements || [];
+    if (!announcements.length) {
+      grid.innerHTML = `<div class="no-results" style="grid-column:1/-1"><div class="no-results-icon">📢</div><h3>Aucune annonce</h3><p>Soyez le premier à publier une annonce !</p></div>`;
+      return;
+    }
+    grid.innerHTML = announcements.map(a => {
+      const user = getUser();
+      const isOwner = user && (user.id === a.user_id || user.role === 'admin');
+      const date = new Date(a.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      return `
+        <div class="announcement-card reveal">
+          <div class="announcement-header">
+            <div class="announcement-author">
+              <div class="ann-avatar">${escapeHTML(a.author).split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2)}</div>
+              <div>
+                <div class="ann-author-name">${escapeHTML(a.author)}</div>
+                <div class="ann-date">${date}</div>
+              </div>
+            </div>
+            ${isOwner ? `<button class="btn-ann-delete" onclick="deleteAnnouncement(${a.id}, this)" title="Supprimer">🗑️</button>` : ''}
+          </div>
+          <h3 class="ann-title">${escapeHTML(a.title)}</h3>
+          <p class="ann-content">${escapeHTML(a.content)}</p>
+        </div>`;
+    }).join('');
+    observeReveal();
+  } catch (err) {
+    document.getElementById('announcements-error-msg').textContent = err.message;
+    document.getElementById('announcements-api-error').style.display = 'flex';
+    grid.innerHTML = '';
+  }
+}
+
+async function submitAnnouncement() {
+  const title = document.getElementById('ann-title').value.trim();
+  const content = document.getElementById('ann-content').value.trim();
+  if (!title || !content) {
+    showToast('❌ Titre et contenu requis', 'error');
+    return;
+  }
+  const btn = document.getElementById('ann-submit-btn');
+  btn.textContent = '⏳ Publication...';
+  btn.disabled = true;
+  try {
+    await apiFetch('/announcements', {
+      method: 'POST',
+      body: JSON.stringify({ title, content })
+    });
+    showToast('✅ Annonce publiée !', 'success');
+    hideNewAnnouncementForm();
+    loadAnnouncements();
+  } catch (err) {
+    showToast('❌ ' + err.message, 'error');
+  } finally {
+    btn.textContent = 'Publier';
+    btn.disabled = false;
+  }
+}
+
+async function deleteAnnouncement(id, btn) {
+  if (!confirm('Supprimer cette annonce ?')) return;
+  btn.textContent = '⏳...';
+  btn.disabled = true;
+  try {
+    await apiFetch('/announcements/' + id, { method: 'DELETE' });
+    showToast('✅ Annonce supprimée', 'success');
+    loadAnnouncements();
+  } catch (err) {
+    showToast('❌ ' + err.message, 'error');
+    btn.textContent = '🗑️';
     btn.disabled = false;
   }
 }

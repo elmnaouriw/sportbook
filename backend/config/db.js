@@ -79,12 +79,26 @@ async function initializeDatabase() {
       ) ENGINE=InnoDB;
     `);
 
-    // 8. Création / Remplacement de la VUE SQL
+    // 8. Création Table ANNOUNCEMENTS
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS \`announcements\` (
+        \`id\` INT AUTO_INCREMENT PRIMARY KEY,
+        \`user_id\` INT NOT NULL,
+        \`title\` VARCHAR(255) NOT NULL,
+        \`content\` TEXT NOT NULL,
+        \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        \`updated_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (\`user_id\`) REFERENCES \`users\`(\`id\`) ON DELETE CASCADE
+      ) ENGINE=InnoDB;
+    `);
+
+    // 9. Création / Remplacement de la VUE SQL
     await connection.query(`
   CREATE OR REPLACE VIEW \`sessions_view\` AS
   SELECT 
     s.id,
     s.title,
+    s.sport_id,
     s.instructor,
     s.date        AS session_date,
     s.time        AS start_time,
@@ -107,7 +121,7 @@ async function initializeDatabase() {
   GROUP BY s.id;
 `);
 
-    // 9. Injection des données de test si la table sports est vide
+    // 10. Injection des données de test si la table sports est vide
     const [rows] = await connection.query('SELECT id FROM sports LIMIT 1');
     if (rows.length === 0) {
       console.log('🌱 Base vide. Injection des données de test...');
@@ -131,7 +145,7 @@ async function initializeDatabase() {
     // Fermer la connexion temporaire
     await connection.end();
 
-    // 10. Initialiser enfin le Pool final qui sera exporté vers l'application
+    // 11. Initialiser enfin le Pool final qui sera exporté vers l'application
     pool = mysql.createPool({
       ...dbConfig,
       database: dbName,

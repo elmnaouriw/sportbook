@@ -20,6 +20,7 @@
   <div class="nav-links">
     <a id="nav-home" class="active" onclick="showPage('home')">Home</a>
     <a id="nav-sessions" onclick="showPage('sessions')">Sessions</a>
+    <a id="nav-announcements" onclick="showAnnouncementsPage()">Annonces</a>
     <a id="nav-bookings" onclick="goToBookings()" style="display:none">Mes réservations</a>
     <a id="nav-admin" onclick="showAdminPage()" style="display:none">Admin</a>
   </div>
@@ -131,6 +132,44 @@
   </div>
 </div>
 
+<!-- ═══ ANNONCES PAGE ═══ -->
+<div id="page-announcements" class="page">
+  <div class="announcements-header">
+    <div>
+      <h1>Annonces</h1>
+      <p>Partagez et découvrez les annonces de la communauté</p>
+    </div>
+    <button class="btn-view-all" onclick="showNewAnnouncementForm()">+ Nouvelle annonce</button>
+  </div>
+  <div id="announcements-api-error" style="display:none" class="api-error">⚠️ <span id="announcements-error-msg"></span></div>
+
+  <!-- Formulaire de création -->
+  <div id="announcement-form" class="announcement-form" style="display:none">
+    <div class="admin-card" style="max-width:600px;margin:0 auto 32px">
+      <h3 id="announcement-form-title">Créer une annonce</h3>
+      <div class="admin-form">
+        <div class="form-group">
+          <label>Titre</label>
+          <input type="text" id="ann-title" placeholder="Titre de l'annonce" />
+        </div>
+        <div class="form-group">
+          <label>Contenu</label>
+          <textarea id="ann-content" rows="5" placeholder="Écrivez votre annonce..."></textarea>
+        </div>
+        <div class="admin-form-actions">
+          <button class="btn-submit" id="ann-submit-btn" onclick="submitAnnouncement()">Publier</button>
+          <button class="btn-cancel" onclick="hideNewAnnouncementForm()">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="announcements-grid" id="announcements-grid">
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:100%"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:100%"></div></div>
+  </div>
+</div>
+
 <!-- ═══ MES RÉSERVATIONS PAGE ═══ -->
 <div id="page-bookings" class="page">
   <div class="bookings-header">
@@ -208,7 +247,10 @@
             <input type="number" id="admin-spots" placeholder="20" min="1" />
           </div>
         </div>
-        <button class="btn-submit" id="admin-create-btn" onclick="adminCreateSession()">+ Create Session</button>
+        <div class="admin-form-actions">
+          <button class="btn-submit" id="admin-create-btn" onclick="adminCreateSession()">+ Create Session</button>
+          <button class="btn-cancel" id="admin-cancel-btn" onclick="adminCancelEdit()" style="display:none">Cancel</button>
+        </div>
       </div>
     </div>
 

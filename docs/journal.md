@@ -24,6 +24,25 @@
 ### Prochaines étapes
 - Modifier une séance existante (US-019) — PUT /api/sessions/:id + formulaire frontend
 
+## 2026-06-16 (3e session)
+### Réalisations
+- Correction CORS dans `server.js` : ajout des origines `localhost:5500` et `127.0.0.1:5500` pour permettre au frontend de communiquer avec l'API
+- Implémentation de la fonctionnalité "Annonces" côté utilisateur :
+  - Table `announcements` en BDD (auto-créée au démarrage) avec liaison FK vers `users`
+  - Route API `GET/POST/DELETE /api/announcements` avec authentification
+  - Page frontend dédiée avec formulaire de création et liste des annonces
+  - Styles CSS pour les cards d'annonces (avatar, auteur, date)
+
+### Problèmes rencontrés
+- Problème CORS : le frontend tournait sur le port 5500 alors que le CORS était configuré uniquement pour le 5501. Résolu en élargissant les origines autorisées dans la config CORS.
+
+### Compétences transversales
+- Autonomie : implémentation complète d'une feature de la BDD au frontend
+- Utilisation d'outils IA exécutants : adoption des agents spécialisés (explore) pour analyser le codebase en profondeur avant d'implémenter
+
+### Prochaines étapes
+- Dashboard admin annonces : interface administrateur pour gérer toutes les annonces
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans
