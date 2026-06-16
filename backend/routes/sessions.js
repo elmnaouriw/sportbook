@@ -65,17 +65,17 @@ router.get('/:id', async (req, res) => {
 // ── POST /api/sessions ───────────────────────
 // Créer une session (admin uniquement)
 router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
-  const { title, sport_id, instructor_id, session_date, start_time, duration_min, location, total_spots } = req.body;
+  const { title, sport_id, instructor, date, time, duration, location, total_spots } = req.body;
 
-  if (!title || !sport_id || !instructor_id || !session_date || !start_time || !duration_min || !location || !total_spots) {
+  if (!title || !sport_id || !instructor || !date || !time || !duration || !location || !total_spots) {
     return res.status(400).json({ error: 'Tous les champs sont requis' });
   }
 
   try {
     const [result] = await db.query(
-      `INSERT INTO sessions (title, sport_id, instructor_id, session_date, start_time, duration_min, location, total_spots)
+      `INSERT INTO sessions (title, sport_id, instructor, date, time, duration, location, total_spots)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [title, sport_id, instructor_id, session_date, start_time, duration_min, location, total_spots]
+      [title, sport_id, instructor, date, time, duration, location, total_spots]
     );
     res.status(201).json({ message: 'Session créée', id: result.insertId });
   } catch (err) {
