@@ -43,6 +43,15 @@
 ### Prochaines étapes
 - Dashboard admin annonces : interface administrateur pour gérer toutes les annonces
 
+## 2026-06-16 (4e session)
+### Réalisations
+- Dashboard admin annonces : section dédiée dans la page Admin pour lister et supprimer les annonces
+- Ajout des fonctions `loadAdminAnnouncements()` et `adminDeleteAnnouncement()` dans app.js
+- Intégration du chargement automatique des annonces dans `showAdminPage()`
+
+### Prochaines étapes
+- Notifications quand une annonce est publiée
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans

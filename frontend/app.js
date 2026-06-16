@@ -437,6 +437,7 @@ function showAdminPage() {
   if (!user || user.role !== 'admin') { showToast('⛔ Accès réservé aux administrateurs', 'error'); return; }
   showPage('admin');
   loadAdminSessions();
+  loadAdminAnnouncements();
 }
 
 async function loadAdminSessions() {
@@ -607,6 +608,53 @@ function adminCancelEdit() {
   document.getElementById('admin-create-btn').onclick = adminCreateSession;
   document.getElementById('admin-cancel-btn').style.display = 'none';
   document.getElementById('admin-api-error').style.display = 'none';
+}
+
+// ── ADMIN ANNONCES ──
+
+async function loadAdminAnnouncements() {
+  const list = document.getElementById('admin-announcements-list');
+  list.innerHTML = `
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>`;
+  try {
+    const data = await apiFetch('/announcements');
+    const announcements = data.announcements || [];
+    if (!announcements.length) {
+      list.innerHTML = '<div class="admin-empty">Aucune annonce pour le moment.</div>';
+      return;
+    }
+    list.innerHTML = announcements.map(a => {
+      const date = new Date(a.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      return `
+        <div class="admin-session-item" data-id="${a.id}">
+          <div class="admin-session-info">
+            <div class="admin-session-title">${escapeHTML(a.title)}</div>
+            <div class="admin-session-meta">Par ${escapeHTML(a.author)} — ${date}</div>
+          </div>
+          <div class="admin-session-actions">
+            <button class="btn-admin-delete" onclick="adminDeleteAnnouncement(${a.id}, this)">Supprimer</button>
+          </div>
+        </div>`;
+    }).join('');
+  } catch {
+    list.innerHTML = '<div class="admin-empty">❌ Erreur chargement annonces</div>';
+  }
+}
+
+async function adminDeleteAnnouncement(id, btn) {
+  if (!confirm('Supprimer cette annonce définitivement ?')) return;
+  btn.textContent = '⏳...';
+  btn.disabled = true;
+  try {
+    await apiFetch('/announcements/' + id, { method: 'DELETE' });
+    showToast('✅ Annonce supprimée', 'success');
+    loadAdminAnnouncements();
+  } catch (err) {
+    showToast('❌ ' + err.message, 'error');
+    btn.textContent = 'Supprimer';
+    btn.disabled = false;
+  }
 }
 
 // ── ANNONCES FUNCTIONS ──
