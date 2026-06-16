@@ -21,6 +21,7 @@
     <a id="nav-home" class="active" onclick="showPage('home')">Home</a>
     <a id="nav-sessions" onclick="showPage('sessions')">Sessions</a>
     <a id="nav-bookings" onclick="goToBookings()" style="display:none">Mes réservations</a>
+    <a id="nav-admin" onclick="showAdminPage()" style="display:none">Admin</a>
   </div>
   <div class="nav-actions" id="nav-actions"></div>
 </nav>
@@ -147,6 +148,77 @@
     <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:55%"></div><div class="skeleton skeleton-line" style="width:100%;height:40px;margin-top:8px"></div></div>
     <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:55%"></div><div class="skeleton skeleton-line" style="width:100%;height:40px;margin-top:8px"></div></div>
     <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:55%"></div><div class="skeleton skeleton-line" style="width:100%;height:40px;margin-top:8px"></div></div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN PAGE ═══ -->
+<div id="page-admin" class="page">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <p>Create and manage sport sessions</p>
+  </div>
+
+  <div class="admin-layout">
+    <div class="admin-card admin-form-card">
+      <h2>Create a Session</h2>
+      <div id="admin-api-error" class="api-error-card" style="display:none"></div>
+      <div class="admin-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="admin-title" placeholder="Morning Yoga Flow" />
+          </div>
+          <div class="form-group">
+            <label>Sport</label>
+            <select id="admin-sport">
+              <option value="1">Yoga</option>
+              <option value="2">Cardio</option>
+              <option value="3">Football</option>
+              <option value="4">Fitness</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Instructor</label>
+            <input type="text" id="admin-instructor" placeholder="Sarah Johnson" />
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="admin-date" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" id="admin-time" />
+          </div>
+          <div class="form-group">
+            <label>Duration (min)</label>
+            <input type="number" id="admin-duration" placeholder="60" min="15" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="admin-location" placeholder="Studio A" />
+          </div>
+          <div class="form-group">
+            <label>Total Spots</label>
+            <input type="number" id="admin-spots" placeholder="20" min="1" />
+          </div>
+        </div>
+        <button class="btn-submit" id="admin-create-btn" onclick="adminCreateSession()">+ Create Session</button>
+      </div>
+    </div>
+
+    <div class="admin-card admin-list-card">
+      <h2>All Sessions</h2>
+      <div id="admin-sessions-list">
+        <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>
+      </div>
+    </div>
   </div>
 </div>
 

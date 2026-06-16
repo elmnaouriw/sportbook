@@ -20,6 +20,7 @@ function escapeHTML(str) {
 function updateNav() {
   const el = document.getElementById('nav-actions');
   const navBookings = document.getElementById('nav-bookings');
+  const navAdmin = document.getElementById('nav-admin');
   const user = getUser();
   if (isLoggedIn() && user) {
     const safeFullName = escapeHTML(user.full_name);
@@ -31,11 +32,13 @@ function updateNav() {
         <button class="btn-logout" onclick="logout()">Déconnexion</button>
       </div>`;
     navBookings.style.display = 'block';
+    navAdmin.style.display = user.role === 'admin' ? 'block' : 'none';
   } else {
     el.innerHTML = `
       <button class="btn-login" onclick="showPage('login')">→ Login</button>
       <button class="btn-register" onclick="showPage('register')">👤 Register</button>`;
     navBookings.style.display = 'none';
+    navAdmin.style.display = 'none';
   }
 }
 
@@ -423,6 +426,103 @@ function showPage(name) {
   if (name === 'sessions') loadSessions();
   if (name === 'bookings') loadBookings();
   setTimeout(observeReveal, 50);
+}
+
+// ── ADMIN FUNCTIONS ──
+
+function showAdminPage() {
+  if (!isLoggedIn()) { showPage('login'); return; }
+  const user = getUser();
+  if (!user || user.role !== 'admin') { showToast('⛔ Accès réservé aux administrateurs', 'error'); return; }
+  showPage('admin');
+  loadAdminSessions();
+}
+
+async function loadAdminSessions() {
+  const list = document.getElementById('admin-sessions-list');
+  list.innerHTML = `
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>`;
+  try {
+    const data = await apiFetch('/sessions');
+    const sessions = data.sessions || [];
+    if (!sessions.length) {
+      list.innerHTML = '<div class="admin-empty">No sessions yet. Create one!</div>';
+      return;
+    }
+    list.innerHTML = sessions.map(s => `
+      <div class="admin-session-item" data-id="${s.id}">
+        <div class="admin-session-info">
+          <div class="admin-session-title">${escapeHTML(s.title)}</div>
+          <div class="admin-session-meta">${escapeHTML(s.instructor)} — ${formatDate(s.session_date)} at ${formatTime(s.start_time)} — ${s.available_spots}/${s.total_spots} spots</div>
+        </div>
+        <button class="btn-admin-delete" onclick="adminDeleteSession(${s.id}, this)">Supprimer</button>
+      </div>
+    `).join('');
+  } catch {
+    list.innerHTML = '<div class="admin-empty">❌ Failed to load sessions</div>';
+  }
+}
+
+async function adminCreateSession() {
+  const errCard = document.getElementById('admin-api-error');
+  errCard.style.display = 'none';
+
+  const title = document.getElementById('admin-title').value.trim();
+  const sport_id = parseInt(document.getElementById('admin-sport').value);
+  const instructor = document.getElementById('admin-instructor').value.trim();
+  const date = document.getElementById('admin-date').value;
+  const time = document.getElementById('admin-time').value;
+  const duration = parseInt(document.getElementById('admin-duration').value);
+  const location = document.getElementById('admin-location').value.trim();
+  const total_spots = parseInt(document.getElementById('admin-spots').value);
+
+  if (!title || !instructor || !date || !time || !duration || !location || !total_spots) {
+    errCard.textContent = '❌ All fields are required';
+    errCard.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('admin-create-btn');
+  btn.textContent = '⏳ Creating...';
+  btn.disabled = true;
+
+  try {
+    await apiFetch('/sessions', {
+      method: 'POST',
+      body: JSON.stringify({ title, sport_id, instructor, date, time, duration, location, total_spots })
+    });
+    showToast('✅ Session created!', 'success');
+    document.getElementById('admin-title').value = '';
+    document.getElementById('admin-instructor').value = '';
+    document.getElementById('admin-date').value = '';
+    document.getElementById('admin-time').value = '';
+    document.getElementById('admin-duration').value = '';
+    document.getElementById('admin-location').value = '';
+    document.getElementById('admin-spots').value = '';
+    loadAdminSessions();
+  } catch (err) {
+    errCard.textContent = '❌ ' + err.message;
+    errCard.style.display = 'block';
+  } finally {
+    btn.textContent = '+ Create Session';
+    btn.disabled = false;
+  }
+}
+
+async function adminDeleteSession(id, btn) {
+  if (!confirm('Delete this session permanently?')) return;
+  btn.textContent = '⏳...';
+  btn.disabled = true;
+  try {
+    await apiFetch('/sessions/' + id, { method: 'DELETE' });
+    showToast('✅ Session deleted', 'success');
+    loadAdminSessions();
+  } catch (err) {
+    showToast('❌ ' + err.message, 'error');
+    btn.textContent = 'Supprimer';
+    btn.disabled = false;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

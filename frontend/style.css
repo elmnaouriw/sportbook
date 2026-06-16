@@ -1178,3 +1178,141 @@ section.content {
   color: var(--red);
   text-align: center;
 }
+
+/* ── ADMIN PAGE ── */
+.admin-header {
+  padding: 40px 48px 0;
+}
+
+.admin-header h1 {
+  font-family: 'Sora', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.admin-header p {
+  color: var(--muted);
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 32px 48px 64px;
+  align-items: start;
+}
+
+.admin-card {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+}
+
+.admin-card h2 {
+  font-family: 'Sora', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.admin-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-form .form-group {
+  margin-bottom: 16px;
+}
+
+.admin-form .form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.admin-form .form-group input,
+.admin-form .form-group select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  background: white;
+  transition: border-color .2s;
+}
+
+.admin-form .form-group input:focus,
+.admin-form .form-group select:focus {
+  border-color: var(--blue);
+}
+
+.admin-form .btn-submit {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.admin-session-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  transition: background .2s;
+}
+
+.admin-session-item:hover {
+  background: var(--bg);
+}
+
+.admin-session-item .admin-session-info {
+  flex: 1;
+}
+
+.admin-session-item .admin-session-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.admin-session-item .admin-session-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.btn-admin-delete {
+  background: none;
+  border: 1.5px solid #fecaca;
+  color: var(--red);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background .2s;
+  white-space: nowrap;
+}
+
+.btn-admin-delete:hover {
+  background: #fef2f2;
+}
+
+.admin-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
