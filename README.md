@@ -1,74 +1,89 @@
-# 🏅 SportBook — Node.js + Express + MySQL
+# SportBook — Node.js + Express + MySQL
+
+Architecture full-stack avec backend Express API et frontend SPA vanilla.
 
 ## Structure du projet
 
 ```
 sportbook/
-├── config/
-│   └── db.js              # Connexion MySQL (pool)
-├── middleware/
-│   └── auth.js            # Vérification JWT
-├── routes/
-│   ├── auth.js            # Register / Login
-│   ├── sessions.js        # CRUD sessions
-│   └── bookings.js        # Réservations
-├── public/
-│   └── index.html         # Ton front-end HTML/CSS/JS
-├── database.sql           # Schéma + données de test
-├── server.js              # Point d'entrée Express
-├── package.json
-└── .env.example
+├── backend/
+│   ├── config/
+│   │   └── db.js              # Pool MySQL + auto-création DB/tables/seed
+│   ├── middleware/
+│   │   └── auth.js            # Vérification JWT + admin
+│   ├── routes/
+│   │   ├── auth.js            # Register / Login
+│   │   ├── sessions.js        # CRUD sessions
+│   │   └── bookings.js        # Réservations
+│   ├── database.sql           # Schéma de référence (manuel)
+│   ├── server.js              # Point d'entrée Express
+│   ├── package.json
+│   └── .env.example
+├── frontend/
+│   ├── index.html             # SPA — 5 pages (Home, Sessions, Bookings, Login, Register)
+│   ├── style.css              # Styles complets (responsive, animations, thème)
+│   ├── app.js                 # Contrôleur SPA (routing, API calls, auth)
+│   └── .vscode/
+│       └── settings.json      # Live Server → port 5501
+└── README.md
 ```
 
 ---
 
-## 🚀 Installation
+## Installation
 
-### 1. Cloner et installer les dépendances
+### 1. Installer les dépendances backend
+
 ```bash
-cd sportbook
+cd backend
 npm install
 ```
 
 ### 2. Configurer l'environnement
+
 ```bash
 cp .env.example .env
 # Éditer .env avec tes infos MySQL
 ```
 
-### 3. Créer la base de données
-```bash
-mysql -u root -p < database.sql
-```
+### 3. Lancer le backend
 
-### 4. Copier le front-end
 ```bash
-mkdir public
-cp ../sportbook.html public/index.html
-```
-
-### 5. Lancer le serveur
-```bash
-# Développement (avec rechargement auto)
+# Développement (rechargement auto)
 npm run dev
 
 # Production
 npm start
 ```
 
-Le serveur tourne sur **http://localhost:3000**
+La base de données, les tables et les données de test sont **créées automatiquement** au premier démarrage (via `config/db.js`).  
+Tu peux aussi utiliser `database.sql` manuellement si tu préfères.
+
+### 4. Lancer le frontend
+
+Ouvre le dossier `frontend/` dans VS Code et lance **Live Server** (port 5501), ou utilise n'importe quel serveur statique :
+
+```bash
+npx serve frontend
+```
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
-### Auth
 | Méthode | Route | Description |
 |---------|-------|-------------|
-| POST | `/api/auth/register` | Créer un compte |
-| POST | `/api/auth/login` | Se connecter |
+| GET | `/api/health` | Healthcheck |
+
+### Auth
+
+| Méthode | Route | Description |
+|---------|-------|-------------|
+| POST | `/api/auth/register` | Créer un compte `{ full_name, email, password }` |
+| POST | `/api/auth/login` | Se connecter `{ email, password }` |
 
 ### Sessions
+
 | Méthode | Route | Description |
 |---------|-------|-------------|
 | GET | `/api/sessions` | Liste (filtres: `?sport=yoga&date=2026-05-20&search=yoga`) |
@@ -78,6 +93,7 @@ Le serveur tourne sur **http://localhost:3000**
 | DELETE | `/api/sessions/:id` | Supprimer *(admin)* |
 
 ### Bookings *(token requis)*
+
 | Méthode | Route | Description |
 |---------|-------|-------------|
 | POST | `/api/bookings` | Réserver `{ session_id }` |
@@ -86,33 +102,19 @@ Le serveur tourne sur **http://localhost:3000**
 
 ---
 
-## 🔐 Authentification
+## Authentification
 
 Toutes les routes protégées nécessitent un header :
+
 ```
 Authorization: Bearer <token>
 ```
 
-Le token est retourné par `/api/auth/login` et `/api/auth/register`.
+Le token JWT est retourné par `/api/auth/login` et `/api/auth/register`.
 
 ---
 
-## 💡 Connecter le front-end à l'API
+## Frontend
 
-Dans ton `sportbook.html`, remplace les données statiques par des appels `fetch` :
-
-```javascript
-// Exemple : charger les sessions
-const res = await fetch('/api/sessions?sport=yoga');
-const { sessions } = await res.json();
-
-// Exemple : réserver
-const res = await fetch('/api/bookings', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + localStorage.getItem('token')
-  },
-  body: JSON.stringify({ session_id: 1 })
-});
-```
+Le frontend est une SPA vanilla (HTML/CSS/JS) servie indépendamment sur `http://127.0.0.1:5501`.  
+Le CORS backend est configuré pour accepter uniquement cette origine.
