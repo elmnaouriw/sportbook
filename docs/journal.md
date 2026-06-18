@@ -52,6 +52,24 @@
 ### Prochaines étapes
 - Notifications quand une annonce est publiée
 
+## 2026-06-18
+### Réalisations
+- Implémentation de la page profil utilisateur (US-005) :
+  - Backend : route `GET /api/users/me` pour consulter son profil
+  - Backend : route `PUT /api/users/me` pour modifier nom, email et mot de passe (avec vérification du mot de passe actuel)
+  - Frontend : page "Mon profil" avec formulaire de modification
+  - Lien de navigation "Mon profil" visible quand connecté
+  - Mise à jour automatique du nom affiché dans la nav après modification
+- Mise à jour de la todo list et user-stories
+
+### Compétences transversales
+- Autonomie : implémentation complète d'une feature de l'API au frontend
+- Organisation : priorisation d'une US P1 après avoir bouclé toutes les P0
+
+### Prochaines étapes
+- Modifier une séance (US-019) — dernière P0 restante
+- Notifications quand une annonce est publiée
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans

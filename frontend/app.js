@@ -32,12 +32,14 @@ function updateNav() {
         <button class="btn-logout" onclick="logout()">Déconnexion</button>
       </div>`;
     navBookings.style.display = 'block';
+    document.getElementById('nav-profile').style.display = 'block';
     navAdmin.style.display = user.role === 'admin' ? 'block' : 'none';
   } else {
     el.innerHTML = `
       <button class="btn-login" onclick="showPage('login')">→ Login</button>
       <button class="btn-register" onclick="showPage('register')">👤 Register</button>`;
     navBookings.style.display = 'none';
+    document.getElementById('nav-profile').style.display = 'none';
     navAdmin.style.display = 'none';
   }
 }
@@ -426,6 +428,7 @@ function showPage(name) {
   window.scrollTo(0, 0);
   if (name === 'sessions') loadSessions();
   if (name === 'bookings') loadBookings();
+  if (name === 'profile') loadProfile();
   setTimeout(observeReveal, 50);
 }
 
@@ -756,6 +759,77 @@ async function deleteAnnouncement(id, btn) {
   } catch (err) {
     showToast('❌ ' + err.message, 'error');
     btn.textContent = '🗑️';
+    btn.disabled = false;
+  }
+}
+
+// ── PROFILE FUNCTIONS ──
+
+function showProfilePage() {
+  if (!isLoggedIn()) { showPage('login'); return; }
+  showPage('profile');
+}
+
+async function loadProfile() {
+  const errCard = document.getElementById('profile-api-error');
+  errCard.style.display = 'none';
+  try {
+    const data = await apiFetch('/users/me');
+    const u = data.user;
+    document.getElementById('profile-name').value = u.full_name || '';
+    document.getElementById('profile-email').value = u.email || '';
+    document.getElementById('profile-current-pw').value = '';
+    document.getElementById('profile-new-pw').value = '';
+  } catch (err) {
+    errCard.textContent = '❌ ' + err.message;
+    errCard.style.display = 'block';
+  }
+}
+
+async function submitProfileUpdate() {
+  const errCard = document.getElementById('profile-api-error');
+  errCard.style.display = 'none';
+
+  const full_name = document.getElementById('profile-name').value.trim();
+  const email = document.getElementById('profile-email').value.trim();
+  const current_password = document.getElementById('profile-current-pw').value;
+  const new_password = document.getElementById('profile-new-pw').value;
+
+  if (!full_name || !email) {
+    errCard.textContent = '❌ Nom et email requis';
+    errCard.style.display = 'block';
+    return;
+  }
+  if (new_password && new_password.length < 6) {
+    errCard.textContent = '❌ Nouveau mot de passe : minimum 6 caractères';
+    errCard.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('profile-save-btn');
+  btn.textContent = '⏳ Enregistrement...';
+  btn.disabled = true;
+
+  try {
+    const data = await apiFetch('/users/me', {
+      method: 'PUT',
+      body: JSON.stringify({ full_name, email, current_password: current_password || undefined, new_password: new_password || undefined })
+    });
+    const user = getUser();
+    if (user) {
+      user.full_name = data.user.full_name;
+      user.email = data.user.email;
+      setAuth(getToken(), user);
+    }
+    updateNav();
+    showToast('✅ Profil mis à jour !', 'success');
+    document.getElementById('profile-current-pw').value = '';
+    document.getElementById('profile-new-pw').value = '';
+  } catch (err) {
+    errCard.textContent = '❌ ' + err.message;
+    errCard.style.display = 'block';
+  } finally {
+    btn.textContent = '💾 Enregistrer';
     btn.disabled = false;
   }
 }

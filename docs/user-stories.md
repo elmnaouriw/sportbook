@@ -8,7 +8,7 @@
 | US-002 | Utilisateur | Me connecter avec email et mot de passe | Accéder à mon espace personnel | ✅ Fait |
 | US-003 | Utilisateur | Rester connecté entre les sessions | Ne pas avoir à me reconnecter à chaque visite | ✅ Fait |
 | US-004 | Utilisateur | Me déconnecter | Sécuriser mon compte | ✅ Fait (côté client) |
-| US-005 | Utilisateur | Consulter et modifier mon profil | Mettre à jour mes informations personnelles | ❌ Manquant |
+| US-005 | Utilisateur | Consulter et modifier mon profil | Mettre à jour mes informations personnelles | ✅ Fait |
 | US-006 | Utilisateur | Réinitialiser mon mot de passe via email | Récupérer l'accès à mon compte si j'oublie mon mot de passe | ❌ Manquant |
 
 ## Epic 2 : Consultation des séances sportives

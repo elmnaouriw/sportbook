@@ -1179,6 +1179,30 @@ section.content {
   text-align: center;
 }
 
+/* ── PROFILE PAGE ── */
+.profile-page {
+  padding: 48px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.profile-header h1 {
+  font-family: 'Sora', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.profile-header p {
+  color: var(--muted);
+  font-size: 15px;
+  margin-top: 6px;
+}
+
 /* ── ADMIN PAGE ── */
 .admin-header {
   padding: 40px 48px 0;

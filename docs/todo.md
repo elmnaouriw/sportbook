@@ -43,7 +43,7 @@ Statuts : ✅ Fait | ❌ À faire | ⚠️ Partiel
 | ✅ | US-029 | P1 | UI/UX | Indicateurs de chargement (skeleton) | Skeleton cards CSS |
 | ✅ | US-030 | P1 | UI/UX | Notifications toast | Toast system |
 | ✅ | US-031 | P1 | UI/UX | Animations fluides | Intersection Observer + CSS |
-| ❌ | US-005 | P1 | Auth | Page profil + modification | GET/PUT /api/users/me |
+| ✅ | US-005 | P1 | Auth | Page profil + modification | GET/PUT /api/users/me |
 | ❌ | US-006 | P1 | Auth | Mot de passe oublié | Endpoint + page |
 | ⚠️ | US-021 | P1 | Admin séances | Dashboard séances avec statistiques | Page admin avec liste + spots, sans dashboard complet |
 | ❌ | US-022 | P1 | Admin séances | Dashboard réservations | Interface admin frontend |
@@ -82,8 +82,8 @@ Statuts : ✅ Fait | ❌ À faire | ⚠️ Partiel
 | Priorité | Total | ✅ Fait | ❌ Manquant | ⚠️ Partiel |
 |----------|-------|---------|-------------|------------|
 | **P0** | 22 | 21 | 1 | 0 |
-| **P1** | 14 | 5 | 7 | 2 |
+| **P1** | 14 | 6 | 6 | 2 |
 | **P2** | 13 | 0 | 11 | 2 |
-| **Total** | **49** | **26** | **19** | **4** |
+| **Total** | **49** | **27** | **18** | **4** |
 
-⬜ **26 / 49** items traités — ✅ **1 P0 manquante** : modifier une séance (US-019)
+⬜ **27 / 49** items traités — ✅ **1 P0 manquante** : modifier une séance (US-019)
