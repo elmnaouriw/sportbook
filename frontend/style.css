@@ -1061,12 +1061,6 @@ section.content {
   min-height: 16px;
 }
 
-.forgot {
-  text-align: right;
-  margin-top: 6px;
-}
-
-.forgot a,
 .auth-link a {
   color: var(--blue);
   font-size: 14px;
