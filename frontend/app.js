@@ -33,6 +33,7 @@ function updateNav() {
       </div>`;
     navBookings.style.display = 'block';
     document.getElementById('nav-profile').style.display = 'block';
+    document.getElementById('nav-announcements').style.display = user.role === 'admin' ? 'block' : 'none';
     navAdmin.style.display = user.role === 'admin' ? 'block' : 'none';
   } else {
     el.innerHTML = `
@@ -40,6 +41,7 @@ function updateNav() {
       <button class="btn-register" onclick="showPage('register')">👤 Register</button>`;
     navBookings.style.display = 'none';
     document.getElementById('nav-profile').style.display = 'none';
+    document.getElementById('nav-announcements').style.display = 'none';
     navAdmin.style.display = 'none';
   }
 }
@@ -668,6 +670,9 @@ async function adminDeleteAnnouncement(id, btn) {
 // ── ANNONCES FUNCTIONS ──
 
 function showAnnouncementsPage() {
+  if (!isLoggedIn()) { showPage('login'); return; }
+  const user = getUser();
+  if (!user || user.role !== 'admin') { showToast('⛔ Accès réservé aux administrateurs', 'error'); return; }
   showPage('announcements');
   hideNewAnnouncementForm();
   loadAnnouncements();

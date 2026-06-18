@@ -87,6 +87,23 @@
 ### Prochaines étapes
 - Modifier une séance (US-019)
 
+## 2026-06-18 (3e session)
+### Réalisations
+- Correction de la visibilité des annonces par rôle :
+  - Backend : `GET` et `POST /api/announcements` protégés par `adminMiddleware` (réservé aux admins)
+  - Frontend : lien "Annonces" masqué pour les utilisateurs non-admin dans la navigation
+  - Frontend : `showAnnouncementsPage()` vérifie le rôle admin avant d'afficher la page
+- Les utilisateurs classiques ne voient plus les annonces (ni dans la nav, ni via l'API)
+
+### Problèmes rencontrés
+- Des annonces de test créées précédemment étaient visibles par tous les utilisateurs, y compris les nouveaux comptes — résolu en restreignant l'accès au rôle admin
+
+### Décisions
+- Séparation claire des fonctionnalités : User peut réserver des séances, Admin peut gérer les annonces et les séances. Chaque profil a sa propre navigation.
+
+### Prochaines étapes
+- Modifier une séance (US-019)
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans

@@ -1,11 +1,11 @@
 const express = require('express');
 const router  = express.Router();
 const db      = require('../config/db');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
 // ── GET /api/announcements ────────────────────
-// Liste toutes les annonces (avec nom de l'auteur)
-router.get('/', async (req, res) => {
+// Liste toutes les annonces (admin uniquement)
+router.get('/', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT a.id, a.title, a.content, a.user_id, u.full_name AS author, a.created_at, a.updated_at
@@ -21,8 +21,8 @@ router.get('/', async (req, res) => {
 });
 
 // ── POST /api/announcements ───────────────────
-// Créer une annonce (connecté requis)
-router.post('/', authMiddleware, async (req, res) => {
+// Créer une annonce (admin uniquement)
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
   const { title, content } = req.body;
   if (!title || !content) {
     return res.status(400).json({ error: 'Titre et contenu requis' });
