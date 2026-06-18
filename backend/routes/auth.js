@@ -6,7 +6,7 @@ const db      = require('../config/db');
 
 // ── POST /api/auth/register ──────────────────
 router.post('/register', async (req, res) => {
-  const { full_name, email, password } = req.body;
+  let { full_name, email, password, role } = req.body;
 
   if (!full_name || !email || !password) {
     return res.status(400).json({ error: 'Tous les champs sont requis' });
@@ -15,8 +15,9 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'Le mot de passe doit faire au moins 6 caractères' });
   }
 
+  role = role === 'admin' ? 'admin' : 'user';
+
   try {
-    // Vérifier si l'email existe déjà
     const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
     if (existing.length > 0) {
       return res.status(409).json({ error: 'Cet email est déjà utilisé' });
@@ -24,20 +25,20 @@ router.post('/register', async (req, res) => {
 
     const hash = await bcrypt.hash(password, 12);
     const [result] = await db.query(
-      'INSERT INTO users (full_name, email, password) VALUES (?, ?, ?)',
-      [full_name.trim(), email.toLowerCase(), hash]
+      'INSERT INTO users (full_name, email, password, role) VALUES (?, ?, ?, ?)',
+      [full_name.trim(), email.toLowerCase(), hash, role]
     );
 
     const token = jwt.sign(
-  { id: result.insertId, email, role: 'user' },
-  process.env.JWT_SECRET,
-  { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }  // ← ici
-);
+      { id: result.insertId, email, role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
 
     res.status(201).json({
       message: 'Compte créé avec succès',
       token,
-      user: { id: result.insertId, full_name, email, role: 'user' }
+      user: { id: result.insertId, full_name, email, role }
     });
   } catch (err) {
     console.error(err);

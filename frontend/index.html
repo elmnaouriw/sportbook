@@ -364,6 +364,27 @@
         <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-confirm" placeholder="••••••••" oninput="validateRegField('confirm')" /></div>
         <span class="field-error" id="reg-confirm-error"></span>
       </div>
+      <div class="form-group">
+        <label>Account Type</label>
+        <div class="role-selector">
+          <label class="role-option" id="role-user-label">
+            <input type="radio" name="role" value="user" checked onchange="validateRegField('role')" />
+            <div class="role-card">
+              <span class="role-icon">👤</span>
+              <span class="role-label">User</span>
+              <span class="role-desc">Book sessions</span>
+            </div>
+          </label>
+          <label class="role-option" id="role-admin-label">
+            <input type="radio" name="role" value="admin" onchange="validateRegField('role')" />
+            <div class="role-card">
+              <span class="role-icon">🛠️</span>
+              <span class="role-label">Admin</span>
+              <span class="role-desc">Post announcements</span>
+            </div>
+          </label>
+        </div>
+      </div>
       <div class="checkbox-row">
         <input type="checkbox" id="terms" onchange="validateRegField('terms')" />
         <label for="terms">I agree to the <a>Terms of Service</a> and <a>Privacy Policy</a></label>

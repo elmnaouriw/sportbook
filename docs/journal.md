@@ -70,6 +70,23 @@
 - Modifier une séance (US-019) — dernière P0 restante
 - Notifications quand une annonce est publiée
 
+## 2026-06-18 (2e session)
+### Réalisations
+- Ajout d'un sélecteur de rôle (User/Admin) dans le formulaire d'inscription :
+  - Backend : route `POST /api/auth/register` accepte désormais un champ `role` (user/admin)
+  - Backend : le rôle est stocké en BDD et inclus dans le JWT (payload + réponse)
+  - Frontend : sélecteur visuel en cartes radio (User pour réserver / Admin pour publier des annonces)
+  - CSS : styles dédiés pour le sélecteur (grille 2 colonnes, carte avec bordure bleue au sélection)
+
+### Problèmes rencontrés
+- Port 3000 déjà utilisé au lancement du serveur : un processus Node résiduel tournait encore, résolu en tuant le processus avec `kill` avant de relancer
+
+### Décisions
+- Choix d'un sélecteur en cartes radio plutôt qu'un simple menu déroulant pour meilleure expérience utilisateur : les deux options sont visibles en permanence avec une description claire (Book sessions / Post announcements)
+
+### Prochaines étapes
+- Modifier une séance (US-019)
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans

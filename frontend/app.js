@@ -345,6 +345,10 @@ function validateRegField(field) {
     document.getElementById('reg-confirm').className = v ? (ok?'input-ok':'input-error') : '';
     return ok;
   }
+  if (field === 'role') {
+    const checked = document.querySelector('input[name="role"]:checked');
+    return !!checked;
+  }
   if (field === 'terms') {
     const checked = document.getElementById('terms').checked;
     document.getElementById('reg-terms-error').textContent = checked ? '' : 'Vous devez accepter les conditions';
@@ -360,13 +364,14 @@ async function submitRegister() {
   const passOk    = validateRegField('password');
   const confirmOk = validateRegField('confirm');
   const termsOk   = validateRegField('terms');
-  if (!nameOk || !emailOk || !passOk || !confirmOk || !termsOk) return;
+  const roleOk   = validateRegField('role');
+  if (!nameOk || !emailOk || !passOk || !confirmOk || !roleOk || !termsOk) return;
   const btn = document.getElementById('reg-btn');
   btn.textContent = '⏳ Création...'; btn.disabled = true;
   try {
     const data = await apiFetch('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ full_name: document.getElementById('reg-name').value.trim(), email: document.getElementById('reg-email').value, password: document.getElementById('reg-password').value })
+      body: JSON.stringify({ full_name: document.getElementById('reg-name').value.trim(), email: document.getElementById('reg-email').value, password: document.getElementById('reg-password').value, role: document.querySelector('input[name="role"]:checked')?.value })
     });
     setAuth(data.token, data.user);
     updateNav();

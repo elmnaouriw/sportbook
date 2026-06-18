@@ -1153,6 +1153,57 @@ section.content {
   color: var(--blue);
 }
 
+/* ── ROLE SELECTOR ── */
+.role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.role-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  background: var(--card-bg);
+}
+
+.role-option input:checked + .role-card {
+  border-color: var(--blue);
+  background: #eff6ff;
+}
+
+.role-card:hover {
+  border-color: var(--blue-light);
+}
+
+.role-icon {
+  font-size: 24px;
+}
+
+.role-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.role-desc {
+  font-size: 11px;
+  color: var(--muted);
+}
+
 .password-strength {
   height: 4px;
   border-radius: 99px;
