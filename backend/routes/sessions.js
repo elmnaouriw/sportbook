@@ -2,10 +2,11 @@ const express = require('express');
 const router  = express.Router();
 const db      = require('../config/db');
 const { authMiddleware, adminMiddleware } = require('../middleware/auth');
+const { AppError } = require('../middleware/errorHandler');
+const { createSessionValidation, updateSessionValidation } = require('../middleware/validate');
 
 // ── GET /api/sessions ────────────────────────
-// Retourne toutes les sessions (avec filtres optionnels)
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   const { sport, date, search } = req.query;
 
   let sql    = 'SELECT * FROM sessions_view WHERE 1=1';
@@ -30,46 +31,37 @@ router.get('/', async (req, res) => {
     const [rows] = await db.query(sql, params);
     res.json({ total: rows.length, sessions: rows });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 
 // ── GET /api/sessions/featured ───────────────
 // 4 premières sessions à venir
-router.get('/featured', async (req, res) => {
+router.get('/featured', async (req, res, next) => {
   try {
-    // 🔧 CORRECTION : On utilise les bons noms de colonnes (date et time)
     const [rows] = await db.query(
       'SELECT * FROM sessions_view ORDER BY session_date ASC, start_time ASC LIMIT 4'
     );
     res.json(rows);
   } catch (err) {
-    // 🔧 DEBUG : On ajoute ça pour voir s'il y a un autre problème dans le terminal
-    console.error("❌ Erreur dans GET /featured :", err); 
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 
 // ── GET /api/sessions/:id ────────────────────
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const [rows] = await db.query('SELECT * FROM sessions_view WHERE id = ?', [req.params.id]);
-    if (!rows.length) return res.status(404).json({ error: 'Session introuvable' });
+    if (!rows.length) return next(new AppError('Session introuvable', 404));
     res.json(rows[0]);
   } catch (err) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 
 // ── POST /api/sessions ───────────────────────
-// Créer une session (admin uniquement)
-router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
+router.post('/', authMiddleware, adminMiddleware, createSessionValidation, async (req, res, next) => {
   const { title, sport_id, instructor, date, time, duration, location, total_spots } = req.body;
-
-  if (!title || !sport_id || !instructor || !date || !time || !duration || !location || !total_spots) {
-    return res.status(400).json({ error: 'Tous les champs sont requis' });
-  }
 
   try {
     const [result] = await db.query(
@@ -79,18 +71,44 @@ router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
     );
     res.status(201).json({ message: 'Session créée', id: result.insertId });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 
 // ── DELETE /api/sessions/:id ─────────────────
-router.delete('/:id', authMiddleware, adminMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     await db.query('DELETE FROM sessions WHERE id = ?', [req.params.id]);
     res.json({ message: 'Session supprimée' });
   } catch (err) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
+  }
+});
+
+// ── PUT /api/sessions/:id ───────────────────
+router.put('/:id', authMiddleware, adminMiddleware, updateSessionValidation, async (req, res, next) => {
+  const { title, sport_id, instructor, date, time, duration, location, total_spots } = req.body;
+
+  const allowedFields = { title, sport_id, instructor, date, time, duration, location, total_spots };
+  const fields = {};
+  for (const [key, value] of Object.entries(allowedFields)) {
+    if (value !== undefined) fields[key] = value;
+  }
+
+  if (Object.keys(fields).length === 0) {
+    return next(new AppError('Aucun champ à mettre à jour', 400));
+  }
+
+  try {
+    const [rows] = await db.query('SELECT id FROM sessions WHERE id = ?', [req.params.id]);
+    if (!rows.length) return next(new AppError('Session introuvable', 404));
+
+    const sets = Object.keys(fields).map(k => `${k} = ?`).join(', ');
+    const values = [...Object.values(fields), req.params.id];
+    await db.query(`UPDATE sessions SET ${sets} WHERE id = ?`, values);
+    res.json({ message: 'Session mise à jour' });
+  } catch (err) {
+    next(err);
   }
 });
 

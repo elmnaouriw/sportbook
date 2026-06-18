@@ -1,112 +1,103 @@
 -- ============================================
---  SportBook — MySQL Schema
+--  SportBook — MySQL Schema (synchronisé avec config/db.js)
 -- ============================================
 
 CREATE DATABASE IF NOT EXISTS sportbook CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE sportbook;
 
+-- ── SPORTS ─────────────────────────────────
+CREATE TABLE IF NOT EXISTS sports (
+  id    INT AUTO_INCREMENT PRIMARY KEY,
+  slug  VARCHAR(50) NOT NULL UNIQUE,
+  name  VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
+
 -- ── USERS ──────────────────────────────────
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   full_name   VARCHAR(100)        NOT NULL,
   email       VARCHAR(150)        NOT NULL UNIQUE,
   password    VARCHAR(255)        NOT NULL,   -- bcrypt hash
   role        ENUM('user','admin') DEFAULT 'user',
-  created_at  DATETIME            DEFAULT CURRENT_TIMESTAMP
-);
-
--- ── SPORTS ─────────────────────────────────
-CREATE TABLE sports (
-  id    INT AUTO_INCREMENT PRIMARY KEY,
-  name  VARCHAR(50) NOT NULL,
-  slug  VARCHAR(50) NOT NULL UNIQUE
-);
-
-INSERT INTO sports (name, slug) VALUES
-  ('Yoga',     'yoga'),
-  ('Cardio',   'cardio'),
-  ('Football', 'football'),
-  ('Fitness',  'fitness');
-
--- ── INSTRUCTORS ────────────────────────────
-CREATE TABLE instructors (
-  id        INT AUTO_INCREMENT PRIMARY KEY,
-  full_name VARCHAR(100) NOT NULL,
-  email     VARCHAR(150)
-);
-
-INSERT INTO instructors (full_name) VALUES
-  ('Sarah Johnson'), ('Mike Chen'), ('David Martinez'),
-  ('Emma Wilson'),   ('Lisa Park'), ('James Torres'),
-  ('Carlos Ruiz'),   ('Nora Kim'),  ('Ana Rivera');
+  created_at  TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
 -- ── SESSIONS ───────────────────────────────
-CREATE TABLE sessions (
-  id            INT AUTO_INCREMENT PRIMARY KEY,
-  title         VARCHAR(150)  NOT NULL,
-  sport_id      INT           NOT NULL,
-  instructor_id INT           NOT NULL,
-  session_date  DATE          NOT NULL,
-  start_time    TIME          NOT NULL,
-  duration_min  INT           NOT NULL,
-  location      VARCHAR(100)  NOT NULL,
-  total_spots   INT           NOT NULL,
-  created_at    DATETIME      DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (sport_id)      REFERENCES sports(id),
-  FOREIGN KEY (instructor_id) REFERENCES instructors(id)
-);
-
-INSERT INTO sessions (title, sport_id, instructor_id, session_date, start_time, duration_min, location, total_spots) VALUES
-  ('Morning Yoga Flow',  1, 1, '2026-05-20', '07:00:00', 60, 'Studio A',      15),
-  ('HIIT Cardio Blast',  2, 2, '2026-05-20', '18:00:00', 45, 'Gym Floor',     20),
-  ('Football Match',     3, 3, '2026-05-21', '17:00:00', 90, 'Outdoor Field', 22),
-  ('Strength Training',  4, 4, '2026-05-21', '08:00:00', 60, 'Weight Room',   12),
-  ('Evening Yoga',       1, 5, '2026-05-22', '19:00:00', 60, 'Studio B',      18),
-  ('Spin Class',         2, 6, '2026-05-22', '09:00:00', 45, 'Cycling Studio',16),
-  ('5-a-side Football',  3, 7, '2026-05-23', '18:00:00', 60, 'Indoor Pitch',  10),
-  ('Core & Abs',         4, 8, '2026-05-23', '12:00:00', 30, 'Studio A',      20),
-  ('Zumba Dance',        2, 9, '2026-05-24', '10:00:00', 50, 'Dance Studio',  25);
+-- Note : instructor est stocké directement (VARCHAR), pas de table instructors dédiée
+CREATE TABLE IF NOT EXISTS sessions (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  sport_id    INT           NOT NULL,
+  title       VARCHAR(150)  NOT NULL,
+  instructor  VARCHAR(100)  NOT NULL,
+  date        DATE          NOT NULL,
+  time        TIME          NOT NULL,
+  duration    INT           NOT NULL,
+  location    VARCHAR(150)  NOT NULL,
+  total_spots INT           NOT NULL,
+  FOREIGN KEY (sport_id) REFERENCES sports(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 -- ── BOOKINGS ───────────────────────────────
-CREATE TABLE bookings (
+CREATE TABLE IF NOT EXISTS bookings (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   user_id     INT      NOT NULL,
   session_id  INT      NOT NULL,
-  booked_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
-  status      ENUM('confirmed','cancelled') DEFAULT 'confirmed',
-  UNIQUE KEY uq_booking (user_id, session_id),
-  FOREIGN KEY (user_id)    REFERENCES users(id),
-  FOREIGN KEY (session_id) REFERENCES sessions(id)
-);
+  status      ENUM('confirmed', 'cancelled') DEFAULT 'confirmed',
+  booked_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY user_session_unique (user_id, session_id),
+  FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
+  FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
--- ── VIEW : sessions avec places disponibles ─
+-- ── TOKEN BLACKLIST ───────────────────────
+CREATE TABLE IF NOT EXISTS token_blacklist (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  token_hash  VARCHAR(64) NOT NULL,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_token_hash (token_hash)
+) ENGINE=InnoDB;
+
+-- ── ANNOUNCEMENTS ──────────────────────────
+CREATE TABLE IF NOT EXISTS announcements (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  user_id     INT           NOT NULL,
+  title       VARCHAR(255)  NOT NULL,
+  content     TEXT          NOT NULL,
+  created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ── VUE : sessions avec places disponibles ─
 CREATE OR REPLACE VIEW sessions_view AS
 SELECT
   s.id,
   s.title,
-
-  sp.name AS sport,
-  sp.slug AS sport,
-
-  i.full_name AS instructor,
-
-  s.session_date AS date,
-  s.start_time AS time,
-  s.duration_min AS duration,
+  s.sport_id,
+  s.instructor,
+  s.date        AS session_date,
+  s.time        AS start_time,
+  s.duration    AS duration_min,
   s.location,
-
-  s.total_spots AS total,
-
-  COUNT(b.id) AS booked,
-
+  s.total_spots,
+  sp.slug       AS sport_slug,
+  sp.name       AS sport_name,
+  IFNULL(COUNT(b.id), 0)                                AS booked_spots,
+  s.total_spots - IFNULL(COUNT(b.id), 0)                AS available_spots,
+  ROUND(IFNULL(COUNT(b.id), 0) / s.total_spots * 100)   AS fill_pct,
   CASE
-    WHEN COUNT(b.id) >= s.total_spots THEN TRUE
-    ELSE FALSE
-  END AS full
-
+    WHEN IFNULL(COUNT(b.id), 0) >= s.total_spots THEN 'full'
+    WHEN IFNULL(COUNT(b.id), 0) / s.total_spots >= 0.8 THEN 'almost_full'
+    ELSE 'available'
+  END AS status
 FROM sessions s
-JOIN sports sp ON sp.id = s.sport_id
-JOIN instructors i ON i.id = s.instructor_id
-LEFT JOIN bookings b ON b.session_id = s.id AND b.status = 'confirmed'
-
+JOIN sports sp ON s.sport_id = sp.id
+LEFT JOIN bookings b ON s.id = b.session_id AND b.status = 'confirmed'
 GROUP BY s.id;
+
+-- ── SEED DATA ──────────────────────────────
+INSERT IGNORE INTO sports (slug, name) VALUES
+  ('yoga', 'Yoga'),
+  ('cardio', 'Cardio'),
+  ('football', 'Football'),
+  ('fitness', 'Fitness');

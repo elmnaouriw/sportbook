@@ -2,10 +2,11 @@ const express = require('express');
 const router  = express.Router();
 const db      = require('../config/db');
 const { authMiddleware, adminMiddleware } = require('../middleware/auth');
+const { AppError } = require('../middleware/errorHandler');
+const { createAnnouncementValidation } = require('../middleware/validate');
 
 // ── GET /api/announcements ────────────────────
-// Liste toutes les annonces (admin uniquement)
-router.get('/', authMiddleware, adminMiddleware, async (req, res) => {
+router.get('/', authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     const [rows] = await db.query(
       `SELECT a.id, a.title, a.content, a.user_id, u.full_name AS author, a.created_at, a.updated_at
@@ -15,18 +16,13 @@ router.get('/', authMiddleware, adminMiddleware, async (req, res) => {
     );
     res.json({ total: rows.length, announcements: rows });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 
 // ── POST /api/announcements ───────────────────
-// Créer une annonce (admin uniquement)
-router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
+router.post('/', authMiddleware, adminMiddleware, createAnnouncementValidation, async (req, res, next) => {
   const { title, content } = req.body;
-  if (!title || !content) {
-    return res.status(400).json({ error: 'Titre et contenu requis' });
-  }
 
   try {
     const [result] = await db.query(
@@ -42,31 +38,28 @@ router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
     );
     res.status(201).json({ message: 'Annonce créée !', announcement: rows[0] });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 
 // ── DELETE /api/announcements/:id ─────────────
-// Supprimer sa propre annonce (ou admin)
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res, next) => {
   try {
     const [rows] = await db.query(
       'SELECT * FROM announcements WHERE id = ?',
       [req.params.id]
     );
-    if (!rows.length) return res.status(404).json({ error: 'Annonce introuvable' });
+    if (!rows.length) return next(new AppError('Annonce introuvable', 404));
 
     const annonce = rows[0];
     if (annonce.user_id !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Vous ne pouvez pas supprimer cette annonce' });
+      return next(new AppError('Vous ne pouvez pas supprimer cette annonce', 403));
     }
 
     await db.query('DELETE FROM announcements WHERE id = ?', [req.params.id]);
     res.json({ message: 'Annonce supprimée' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 

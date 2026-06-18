@@ -104,6 +104,37 @@
 ### Prochaines étapes
 - Modifier une séance (US-019)
 
+## 2026-06-18 (4e session)
+### Réalisations
+- Ajout de **Helmet** pour sécuriser les en-têtes HTTP (prévention XSS, clickjacking, etc.)
+- Ajout de **express-rate-limit** avec deux limiteurs : général (100 req/15min) et auth (10 req/15min)
+- Ajout de **express-validator** sur toutes les routes d'API :
+  - Validation des entrées (email, mot de passe, champs requis, formats)
+  - Middleware de validation réutilisable dans `middleware/validate.js`
+- **API URL configurable** : variable `API_URL` dans `.env`, CORS via `CORS_ORIGINS`, frontend lit `window.__API_URL__` avec fallback
+- **PUT /sessions** sécurisé : validation des types via express-validator (sport_id entier, date ISO, time HH:MM, etc.)
+- **Endpoint `POST /api/auth/logout`** avec invalidation du token :
+  - Blacklist en mémoire (Set) avec hash SHA-256
+  - Vérification du token blacklisté dans `authMiddleware`
+  - Frontend : `logout()` appelle l'API avant de nettoyer le localStorage
+- Ajout table `token_blacklist` dans `database.sql` et migration auto `config/db.js`
+
+### Problèmes rencontrés
+- Aucun problème majeur — les tests existants (17 tests) passent sans modification grâce au choix d'une blacklist en mémoire plutôt qu'en BDD pour le middleware d'auth
+
+### Décisions
+- Blacklist en mémoire (Set) plutôt qu'en BDD : pas de requête DB à chaque appel API, plus performant ; non persisté entre les redémarrages mais acceptable pour ce projet
+- Rate-limiter séparé pour `/api/auth/` (10 req/15min) plus restrictif que le limiteur général (100 req/15min) pour limiter les tentatives de brute-force
+- express-validator plutôt que Joi : plus léger, s'intègre nativement avec Express, suffisant pour les besoins du projet
+
+### Compétences transversales
+- Sécurité : prise de conscience des bonnes pratiques (helmet, rate limiting, validation, blacklist)
+- Organisation : traitement groupé de 5 tâches de sécurité/maintenance en une session
+
+### Prochaines étapes
+- Tests de sécurité (US-042)
+- Déploiement (Docker / VPS)
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans

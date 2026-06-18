@@ -79,7 +79,17 @@ async function initializeDatabase() {
       ) ENGINE=InnoDB;
     `);
 
-    // 8. Création Table ANNOUNCEMENTS
+    // 8. Création Table TOKEN_BLACKLIST
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS \`token_blacklist\` (
+        \`id\` INT AUTO_INCREMENT PRIMARY KEY,
+        \`token_hash\` VARCHAR(64) NOT NULL,
+        \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_token_hash (\`token_hash\`)
+      ) ENGINE=InnoDB;
+    `);
+
+    // 9. Création Table ANNOUNCEMENTS
     await connection.query(`
       CREATE TABLE IF NOT EXISTS \`announcements\` (
         \`id\` INT AUTO_INCREMENT PRIMARY KEY,
@@ -92,7 +102,7 @@ async function initializeDatabase() {
       ) ENGINE=InnoDB;
     `);
 
-    // 9. Création / Remplacement de la VUE SQL
+    // 10. Création / Remplacement de la VUE SQL
     await connection.query(`
   CREATE OR REPLACE VIEW \`sessions_view\` AS
   SELECT 
@@ -121,7 +131,7 @@ async function initializeDatabase() {
   GROUP BY s.id;
 `);
 
-    // 10. Injection des données de test si la table sports est vide
+    // 11. Injection des données de test si la table sports est vide
     const [rows] = await connection.query('SELECT id FROM sports LIMIT 1');
     if (rows.length === 0) {
       console.log('🌱 Base vide. Injection des données de test...');

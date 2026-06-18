@@ -3,24 +3,20 @@ const router  = express.Router();
 const bcrypt  = require('bcrypt');
 const jwt     = require('jsonwebtoken');
 const db      = require('../config/db');
+const { AppError } = require('../middleware/errorHandler');
+const { authMiddleware, addToBlacklist } = require('../middleware/auth');
+const { registerValidation, loginValidation } = require('../middleware/validate');
 
 // ── POST /api/auth/register ──────────────────
-router.post('/register', async (req, res) => {
+router.post('/register', registerValidation, async (req, res, next) => {
   let { full_name, email, password, role } = req.body;
-
-  if (!full_name || !email || !password) {
-    return res.status(400).json({ error: 'Tous les champs sont requis' });
-  }
-  if (password.length < 6) {
-    return res.status(400).json({ error: 'Le mot de passe doit faire au moins 6 caractères' });
-  }
 
   role = role === 'admin' ? 'admin' : 'user';
 
   try {
     const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
     if (existing.length > 0) {
-      return res.status(409).json({ error: 'Cet email est déjà utilisé' });
+      return next(new AppError('Cet email est déjà utilisé', 409));
     }
 
     const hash = await bcrypt.hash(password, 12);
@@ -41,36 +37,31 @@ router.post('/register', async (req, res) => {
       user: { id: result.insertId, full_name, email, role }
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
 });
 
 // ── POST /api/auth/login ─────────────────────
-router.post('/login', async (req, res) => {
+router.post('/login', loginValidation, async (req, res, next) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email et mot de passe requis' });
-  }
 
   try {
     const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email.toLowerCase()]);
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+      return next(new AppError('Email ou mot de passe incorrect', 401));
     }
 
     const user = rows[0];
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+      return next(new AppError('Email ou mot de passe incorrect', 401));
     }
 
     const token = jwt.sign(
-  { id: user.id, email: user.email, role: user.role },
-  process.env.JWT_SECRET,
-  { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }  // ← ici
-);
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
 
     res.json({
       message: 'Connexion réussie',
@@ -78,9 +69,16 @@ router.post('/login', async (req, res) => {
       user: { id: user.id, full_name: user.full_name, email: user.email, role: user.role }
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    next(err);
   }
+});
+
+// ── POST /api/auth/logout ────────────────────
+router.post('/logout', authMiddleware, (req, res) => {
+  const header = req.headers['authorization'];
+  const token = header.split(' ')[1];
+  addToBlacklist(token);
+  res.json({ message: 'Déconnexion réussie' });
 });
 
 module.exports = router;

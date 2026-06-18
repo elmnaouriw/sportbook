@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+const API = window.__API_URL__ || 'http://localhost:3000/api';
 
 function getToken()    { return localStorage.getItem('sb_token'); }
 function getUser()     { try { return JSON.parse(localStorage.getItem('sb_user')); } catch { return null; } }
@@ -46,7 +46,10 @@ function updateNav() {
   }
 }
 
-function logout() {
+async function logout() {
+  try {
+    await apiFetch('/auth/logout', { method: 'POST' });
+  } catch {}
   clearAuth();
   updateNav();
   showToast('👋 À bientôt !', 'success');
