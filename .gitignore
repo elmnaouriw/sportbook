@@ -2,3 +2,9 @@ node_modules
 .DS_Store
 
 .env
+
+# Fichiers générés
+soutenance/SportBook-Presentation.pptx
+
+# Fichier Keynote (Apple)
+Soutenance_DWWM_SportBook_V3_Technique.key

@@ -217,6 +217,27 @@
 - Tests de sécurité (US-042)
 - Navigation clavier (US-032) et accessibilité (US-033)
 
+## 2026-07-02 (7e session)
+### Réalisations
+- **Migration bcrypt → bcryptjs** : remplacement de `bcrypt` (dépendances natives, échec d'install sur certaines archi) par `bcryptjs` (pure JS, cross-platform) dans tous les fichiers backend
+- **Simplification du workflow dev** : suppression du bloc `isProduction` dans `server.js` — Express sert désormais le frontend en dev comme en prod. `npm run dev` ne lance plus que le backend (plus besoin de live-server)
+- **Nouveau script dev** : `npm run dev:hot` conserve l'ancien comportement (backend + live-server) pour ceux qui veulent le hot-reload
+- **Tri des fichiers de soutenance** : `.gitignore` mis à jour pour exclure `SportBook-Presentation.pptx` (généré par `generate-pptx.js`) ; les fichiers source (`generate-pptx.js`, `presentation-sportbook.md`, `script-oral.md`, `Soutenance_DWWM_SportBook_V3_Technique.key`) sont versionnés
+- **Création de `docs/plan-de-comite.md`** : document complet avec déroulement du jour J (timing 20-30 min, plan de présentation slide par slide, démo utilisateur + admin, anticipation questions jury) et dossier jury (documents à fournir, checklist préparation, auto-évaluation)
+
+### Décisions
+- bcryptjs plutôt que bcrypt : pas de dépendances natives = installation fiable sur tous les environnements (Mac, Windows, Linux, Docker multi-arch)
+- Frontend servi par Express en dev : simplifie le workflow, un seul processus, plus de problème CORS entre ports
+- Fichiers soutenance : seuls les fichiers source sont versionnés, le PPTX généré est ignoré par Git
+
+### Compétences transversales
+- Organisation : préparation complète du dossier de soutenance (plan de comité, tri des fichiers, simplification du workflow)
+- Rigueur : nettoyage des dépendances et harmonisation dev/prod avant la soutenance
+
+### Prochaines étapes
+- Tests de sécurité (US-042)
+- Navigation clavier (US-032) et accessibilité (US-033)
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans

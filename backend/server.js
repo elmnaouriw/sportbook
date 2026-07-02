@@ -9,8 +9,6 @@ const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-const isProduction = process.env.NODE_ENV === 'production';
-
 const corsOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',').map(s => s.trim())
   : ['http://127.0.0.1:5501', 'http://127.0.0.1:5500', 'http://localhost:5501', 'http://localhost:5500'];
@@ -19,9 +17,7 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: corsOrigins, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 
-if (isProduction) {
-  app.use(express.static(path.join(__dirname, '..', 'frontend')));
-}
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -61,11 +57,9 @@ app.use('/api/', (req, res) => {
   res.status(404).json({ error: 'Route introuvable' });
 });
 
-if (isProduction) {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
-  });
-}
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
 
 app.use(errorHandler);
 
