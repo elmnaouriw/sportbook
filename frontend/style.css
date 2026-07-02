@@ -1147,6 +1147,42 @@ section.content {
   color: var(--blue);
 }
 
+/* ── FOOTER ── */
+.site-footer {
+  margin-top: 80px;
+  padding: 32px 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+
+.footer-links a {
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.footer-links a:hover {
+  color: var(--blue);
+}
+
+.footer-copy {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 /* ── ROLE SELECTOR ── */
 .role-selector {
   display: grid;
@@ -1557,4 +1593,300 @@ section.content {
 .announcement-form textarea:focus {
   outline: none;
   border-color: var(--primary);
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — Tablette & Mobile
+   ═══════════════════════════════════════════ */
+
+/* Tablette (max 1024px) */
+@media (max-width: 1024px) {
+  nav {
+    padding: 0 24px;
+  }
+
+  .nav-links {
+    gap: 16px;
+  }
+
+  .hero {
+    padding: 60px 24px 70px;
+  }
+
+  .search-bar {
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+
+  .search-field {
+    min-width: 140px;
+  }
+
+  .stats {
+    gap: 40px;
+    padding: 40px 24px;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  section.content,
+  .why-section {
+    padding: 48px 24px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sessions-header,
+  .bookings-header,
+  .admin-header {
+    padding: 32px 24px 0;
+  }
+
+  .filters-box {
+    margin: 20px 24px;
+    padding: 20px;
+  }
+
+  .filters-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sessions-grid,
+  .bookings-grid {
+    padding: 0 24px 48px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sessions-count,
+  .bookings-count {
+    padding: 0 24px 16px;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr;
+    padding: 24px 24px 48px;
+  }
+
+  .admin-form .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-banner {
+    padding: 50px 24px;
+  }
+
+  .cta-banner h2 {
+    font-size: 28px;
+  }
+}
+
+/* Mobile (max 640px) */
+@media (max-width: 640px) {
+  nav {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .nav-links {
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
+  .nav-logo span {
+    display: none;
+  }
+
+  .nav-user-name {
+    display: none;
+  }
+
+  .hero {
+    padding: 48px 16px 56px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero p {
+    font-size: 15px;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+
+  .btn-search {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 32px 16px;
+  }
+
+  .stat {
+    width: calc(50% - 12px);
+  }
+
+  .stat-number {
+    font-size: 22px;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  section.content,
+  .why-section {
+    padding: 32px 16px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 22px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .why-section h2 {
+    font-size: 24px;
+  }
+
+  .sessions-header,
+  .bookings-header,
+  .admin-header {
+    padding: 24px 16px 0;
+  }
+
+  .sessions-header h1,
+  .bookings-header h1,
+  .admin-header h1 {
+    font-size: 24px;
+  }
+
+  .filters-box {
+    margin: 16px;
+    padding: 16px;
+  }
+
+  .filters-row {
+    grid-template-columns: 1fr;
+  }
+
+  .sessions-grid,
+  .bookings-grid {
+    padding: 0 16px 32px;
+    grid-template-columns: 1fr;
+  }
+
+  .sessions-count,
+  .bookings-count {
+    padding: 0 16px 12px;
+  }
+
+  .admin-layout {
+    padding: 16px 16px 32px;
+  }
+
+  .admin-card {
+    padding: 20px;
+  }
+
+  .admin-card h2 {
+    font-size: 18px;
+  }
+
+  .admin-session-item {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .admin-session-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .cta-banner {
+    padding: 40px 16px;
+  }
+
+  .cta-banner h2 {
+    font-size: 24px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .auth-card {
+    padding: 28px 20px;
+  }
+
+  .auth-card h2 {
+    font-size: 20px;
+  }
+
+  .role-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .announcements-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .announcement-card {
+    padding: 16px;
+  }
+
+  .announcement-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .admin-form .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .bookings-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-page {
+    padding: 24px 16px;
+  }
+
+  .toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    text-align: center;
+    justify-content: center;
+  }
 }

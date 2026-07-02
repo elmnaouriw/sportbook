@@ -22,6 +22,7 @@ function updateNav() {
   const navBookings = document.getElementById('nav-bookings');
   const navAdmin = document.getElementById('nav-admin');
   const user = getUser();
+  const cta = document.getElementById('cta-banner');
   if (isLoggedIn() && user) {
     const safeFullName = escapeHTML(user.full_name);
     const initials = safeFullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
@@ -35,14 +36,16 @@ function updateNav() {
     document.getElementById('nav-profile').style.display = 'block';
     document.getElementById('nav-announcements').style.display = user.role === 'admin' ? 'block' : 'none';
     navAdmin.style.display = user.role === 'admin' ? 'block' : 'none';
+    if (cta) cta.style.display = 'none';
   } else {
     el.innerHTML = `
-      <button class="btn-login" onclick="showPage('login')">→ Login</button>
-      <button class="btn-register" onclick="showPage('register')">👤 Register</button>`;
+      <button class="btn-login" onclick="showPage('login')">→ Connexion</button>
+      <button class="btn-register" onclick="showPage('register')">👤 Inscription</button>`;
     navBookings.style.display = 'none';
     document.getElementById('nav-profile').style.display = 'none';
     document.getElementById('nav-announcements').style.display = 'none';
     navAdmin.style.display = 'none';
+    if (cta) cta.style.display = '';
   }
 }
 
@@ -75,16 +78,15 @@ const tagLabels = { yoga:'Yoga', cardio:'Cardio', football:'Football', fitness:'
 
 function formatDate(d) {
   if (!d) return '';
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const months = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
   const [y,m,day] = d.split('T')[0].split('-');
-  return months[parseInt(m)-1]+' '+parseInt(day)+', '+y;
+  return parseInt(day)+' '+months[parseInt(m)-1]+' '+y;
 }
 
 function formatTime(t) {
   if (!t) return '';
   const [h, m] = t.split(':');
-  const hour = parseInt(h);
-  return (hour > 12 ? hour-12 : hour)+':'+(m||'00')+' '+(hour >= 12 ? 'PM' : 'AM');
+  return h+':'+(m||'00');
 }
 
 function buildCard(s) {
@@ -92,19 +94,19 @@ function buildCard(s) {
   const status    = s.status || (s.available_spots === 0 ? 'full' : s.fill_pct >= 80 ? 'almost_full' : 'available');
   const fillClass = status === 'full' ? 'red' : status === 'almost_full' ? 'yellow' : '';
   const spotsLabel = status === 'full'
-    ? `0 / ${s.total_spots} spots available`
-    : `${s.available_spots} / ${s.total_spots} spots available`;
+    ? `0 / ${s.total_spots} places`
+    : `${s.available_spots} / ${s.total_spots} places`;
   const urgent = s.available_spots <= 3 && status !== 'full';
   return `
     <div class="session-card reveal" data-id="${s.id}">
       <div class="card-tags">
         <span class="tag ${tagColors[sport]}">${tagLabels[sport] || escapeHTML(sport)}</span>
-        ${status === 'almost_full' ? '<span class="tag tag-almost-full">Almost Full</span>' : ''}
-        ${status === 'full'        ? '<span class="tag tag-full">Full</span>' : ''}
+        ${status === 'almost_full' ? '<span class="tag tag-almost-full">Presque complet</span>' : ''}
+        ${status === 'full'        ? '<span class="tag tag-full">Complet</span>' : ''}
       </div>
       <div>
         <div class="card-title">${escapeHTML(s.title)}</div>
-        <div class="card-instructor">with ${escapeHTML(s.instructor)}</div>
+        <div class="card-instructor">avec ${escapeHTML(s.instructor)}</div>
       </div>
       <div class="card-info">
         <div class="card-info-row">📅 ${formatDate(s.session_date)}</div>
@@ -114,8 +116,8 @@ function buildCard(s) {
       </div>
       <div class="progress-bar"><div class="progress-fill ${fillClass}" id="bar-${s.id}" style="width:${s.fill_pct||0}%"></div></div>
       ${status === 'full'
-        ? `<button class="btn-full">Session Full</button>`
-        : `<button class="btn-book" id="book-btn-${s.id}" onclick="bookSession(${s.id})">Book Now</button>`}
+        ? `<button class="btn-full">Complet</button>`
+        : `<button class="btn-book" id="book-btn-${s.id}" onclick="bookSession(${s.id})">Réserver</button>`}
     </div>`;
 }
 
@@ -126,7 +128,7 @@ function buildBookingCard(b) {
     <div class="session-card reveal">
       <div class="card-tags">
         <span class="tag ${tagColors[sport]}">${tagLabels[sport] || escapeHTML(sport)}</span>
-        <span class="tag tag-confirmed">✓ Confirmée</span>
+        <span class="tag tag-confirmed">✓ Confirmé</span>
       </div>
       <div>
         <div class="card-title">${escapeHTML(b.title)}</div>
@@ -138,7 +140,7 @@ function buildBookingCard(b) {
         <div class="card-info-row">📍 ${escapeHTML(b.location)}</div>
         <div class="card-info-row">🗓️ Réservé le ${bookedAt}</div>
       </div>
-      <button class="btn-cancel" onclick="cancelBooking(${b.booking_id}, this)">Annuler la réservation</button>
+      <button class="btn-cancel" onclick="cancelBooking(${b.booking_id}, this)">Annuler</button>
     </div>`;
 }
 
@@ -149,7 +151,7 @@ async function loadFeatured() {
     document.getElementById('featured-cards').innerHTML = sessions.map(buildCard).join('');
     observeReveal();
   } catch {
-    document.getElementById('featured-cards').innerHTML = `<div class="no-results"><div class="no-results-icon">⚠️</div><h3>Impossible de charger les sessions</h3><p>Vérifie que le serveur tourne sur localhost:3000</p></div>`;
+    document.getElementById('featured-cards').innerHTML = `<div class="no-results"><div class="no-results-icon">⚠️</div><h3>Impossible de charger les séances</h3><p>Vérifie que le serveur tourne sur localhost:3000</p></div>`;
   }
 }
 
@@ -168,10 +170,10 @@ async function loadSessions(params = {}) {
     document.getElementById('sessions-count-num').textContent = sessions.length;
     grid.innerHTML = sessions.length
       ? sessions.map(buildCard).join('')
-      : `<div class="no-results"><div class="no-results-icon">🔍</div><h3>No sessions found</h3><p>Try adjusting your filters</p></div>`;
+      : `<div class="no-results"><div class="no-results-icon">🔍</div><h3>Aucune séance trouvée</h3><p>Essayez de modifier vos filtres</p></div>`;
     observeReveal();
   } catch {
-    document.getElementById('sessions-error-msg').textContent = 'Impossible de charger les sessions.';
+    document.getElementById('sessions-error-msg').textContent = 'Impossible de charger les séances.';
     errEl.style.display = 'flex';
     grid.innerHTML = '';
     document.getElementById('sessions-count-num').textContent = '0';
@@ -199,7 +201,7 @@ async function loadBookings() {
       observeReveal();
     }
   } catch (err) {
-    document.getElementById('bookings-error-msg').textContent = err.message;
+    document.getElementById('bookings-error-msg').textContent = 'Erreur : ' + err.message;
     errEl.style.display = 'flex';
     grid.innerHTML = '';
   }
@@ -245,20 +247,20 @@ function heroSearch() {
 async function bookSession(id) {
   if (!isLoggedIn()) { showToast('🔒 Connecte-toi pour réserver', 'error'); showPage('login'); return; }
   const btn = document.getElementById('book-btn-' + id);
-  if (btn) { btn.textContent = '⏳ Booking...'; btn.disabled = true; }
+  if (btn) { btn.textContent = '⏳ Réservation...'; btn.disabled = true; }
   try {
     const data = await apiFetch('/bookings', { method: 'POST', body: JSON.stringify({ session_id: id }) });
     const s = data.session;
     const status = s.status;
     const spotsEl = document.getElementById('spots-' + id);
     const barEl   = document.getElementById('bar-'   + id);
-    if (spotsEl) spotsEl.textContent = `${s.available_spots} / ${s.total_spots} spots available`;
+    if (spotsEl) spotsEl.textContent = `${s.available_spots} / ${s.total_spots} places`;
     if (barEl)   { barEl.style.width = s.fill_pct + '%'; barEl.className = 'progress-fill ' + (status==='full'?'red':status==='almost_full'?'yellow':''); }
-    if (btn && status === 'full') btn.outerHTML = `<button class="btn-full">Session Full</button>`;
-    else if (btn) { btn.textContent = 'Book Now'; btn.disabled = false; }
+    if (btn && status === 'full') btn.outerHTML = `<button class="btn-full">Complet</button>`;
+    else if (btn) { btn.textContent = 'Réserver'; btn.disabled = false; }
     showToast('✅ ' + (data.message || 'Réservation confirmée !'), 'success');
   } catch (err) {
-    if (btn) { btn.textContent = 'Book Now'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Réserver'; btn.disabled = false; }
     showToast('❌ ' + err.message, 'error');
   }
 }
@@ -281,6 +283,7 @@ function validateLoginField(field) {
 }
 
 async function submitLogin() {
+  if (isLoggedIn()) { showPage('home'); return; }
   const errCard = document.getElementById('login-api-error');
   errCard.style.display = 'none';
   const emailOk = validateLoginField('email');
@@ -302,7 +305,7 @@ async function submitLogin() {
     errCard.textContent = '❌ ' + err.message;
     errCard.style.display = 'block';
   } finally {
-    btn.textContent = '→ Sign In'; btn.disabled = false;
+    btn.textContent = '→ Se connecter'; btn.disabled = false;
   }
 }
 
@@ -362,6 +365,7 @@ function validateRegField(field) {
 }
 
 async function submitRegister() {
+  if (isLoggedIn()) { showPage('home'); return; }
   const errCard = document.getElementById('reg-api-error');
   errCard.style.display = 'none';
   const nameOk    = validateRegField('name');
@@ -386,7 +390,7 @@ async function submitRegister() {
     errCard.textContent = '❌ ' + err.message;
     errCard.style.display = 'block';
   } finally {
-    btn.textContent = '👤 Create Account'; btn.disabled = false;
+    btn.textContent = '👤 Créer mon compte'; btn.disabled = false;
   }
 }
 
@@ -430,6 +434,9 @@ function showToast(msg, type = 'success') {
 }
 
 function showPage(name) {
+  if (isLoggedIn() && (name === 'login' || name === 'register' || name === 'forgot-password' || name === 'reset-password')) {
+    name = 'home';
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
@@ -444,11 +451,24 @@ function showPage(name) {
 
 // ── ADMIN FUNCTIONS ──
 
+async function loadSports() {
+  try {
+    const data = await apiFetch('/sports');
+    const sports = data.sports || [];
+    const select = document.getElementById('admin-sport');
+    select.innerHTML = sports.map(s => `<option value="${s.id}">${escapeHTML(s.name)}</option>`).join('');
+  } catch {
+    const select = document.getElementById('admin-sport');
+    select.innerHTML = '<option value="1">Yoga</option><option value="2">Cardio</option><option value="3">Football</option><option value="4">Fitness</option>';
+  }
+}
+
 function showAdminPage() {
   if (!isLoggedIn()) { showPage('login'); return; }
   const user = getUser();
   if (!user || user.role !== 'admin') { showToast('⛔ Accès réservé aux administrateurs', 'error'); return; }
   showPage('admin');
+  loadSports();
   loadAdminSessions();
   loadAdminAnnouncements();
 }
@@ -462,14 +482,14 @@ async function loadAdminSessions() {
     const data = await apiFetch('/sessions');
     const sessions = data.sessions || [];
     if (!sessions.length) {
-      list.innerHTML = '<div class="admin-empty">No sessions yet. Create one!</div>';
+      list.innerHTML = '<div class="admin-empty">Aucune séance pour le moment. Créez-en une !</div>';
       return;
     }
     list.innerHTML = sessions.map(s => `
       <div class="admin-session-item" data-id="${s.id}">
         <div class="admin-session-info">
           <div class="admin-session-title">${escapeHTML(s.title)}</div>
-          <div class="admin-session-meta">${escapeHTML(s.instructor)} — ${formatDate(s.session_date)} at ${formatTime(s.start_time)} — ${s.available_spots}/${s.total_spots} spots</div>
+          <div class="admin-session-meta">${escapeHTML(s.instructor)} — ${formatDate(s.session_date)} à ${formatTime(s.start_time)} — ${s.available_spots}/${s.total_spots} places</div>
         </div>
         <div class="admin-session-actions">
           <button class="btn-admin-edit" onclick="adminEditSession(${s.id})">Modifier</button>
@@ -478,7 +498,7 @@ async function loadAdminSessions() {
       </div>
     `).join('');
   } catch {
-    list.innerHTML = '<div class="admin-empty">❌ Failed to load sessions</div>';
+    list.innerHTML = '<div class="admin-empty">❌ Échec du chargement des séances</div>';
   }
 }
 
@@ -497,13 +517,13 @@ async function adminCreateSession() {
   const total_spots = parseInt(document.getElementById('admin-spots').value);
 
   if (!title || !instructor || !date || !time || !duration || !location || !total_spots) {
-    errCard.textContent = '❌ All fields are required';
+    errCard.textContent = '❌ Tous les champs sont requis';
     errCard.style.display = 'block';
     return;
   }
 
   const btn = document.getElementById('admin-create-btn');
-  btn.textContent = '⏳ Creating...';
+  btn.textContent = '⏳ Création...';
   btn.disabled = true;
 
   try {
@@ -511,7 +531,7 @@ async function adminCreateSession() {
       method: 'POST',
       body: JSON.stringify({ title, sport_id, instructor, date, time, duration, location, total_spots })
     });
-    showToast('✅ Session created!', 'success');
+    showToast('✅ Séance créée !', 'success');
     document.getElementById('admin-title').value = '';
     document.getElementById('admin-instructor').value = '';
     document.getElementById('admin-date').value = '';
@@ -524,18 +544,18 @@ async function adminCreateSession() {
     errCard.textContent = '❌ ' + err.message;
     errCard.style.display = 'block';
   } finally {
-    btn.textContent = '+ Create Session';
+    btn.textContent = '+ Créer une séance';
     btn.disabled = false;
   }
 }
 
 async function adminDeleteSession(id, btn) {
-  if (!confirm('Delete this session permanently?')) return;
+  if (!confirm('Supprimer cette séance définitivement ?')) return;
   btn.textContent = '⏳...';
   btn.disabled = true;
   try {
     await apiFetch('/sessions/' + id, { method: 'DELETE' });
-    showToast('✅ Session deleted', 'success');
+    showToast('✅ Séance supprimée', 'success');
     loadAdminSessions();
   } catch (err) {
     showToast('❌ ' + err.message, 'error');
@@ -557,7 +577,7 @@ async function adminEditSession(id) {
     document.getElementById('admin-spots').value = session.total_spots || '';
 
     editingSessionId = id;
-    document.getElementById('admin-create-btn').textContent = 'Update Session';
+    document.getElementById('admin-create-btn').textContent = 'Mettre à jour';
     document.getElementById('admin-create-btn').onclick = adminUpdateSession;
     document.getElementById('admin-cancel-btn').style.display = 'inline-block';
     document.getElementById('admin-api-error').style.display = 'none';
@@ -581,13 +601,13 @@ async function adminUpdateSession() {
   const total_spots = parseInt(document.getElementById('admin-spots').value);
 
   if (!title || !instructor || !date || !time || !duration || !location || !total_spots) {
-    errCard.textContent = '❌ All fields are required';
+    errCard.textContent = '❌ Tous les champs sont requis';
     errCard.style.display = 'block';
     return;
   }
 
   const btn = document.getElementById('admin-create-btn');
-  btn.textContent = '⏳ Updating...';
+  btn.textContent = '⏳ Mise à jour...';
   btn.disabled = true;
 
   try {
@@ -595,14 +615,14 @@ async function adminUpdateSession() {
       method: 'PUT',
       body: JSON.stringify({ title, sport_id, instructor, date, time, duration, location, total_spots })
     });
-    showToast('✅ Session updated!', 'success');
+    showToast('✅ Séance mise à jour !', 'success');
     adminCancelEdit();
     loadAdminSessions();
   } catch (err) {
     errCard.textContent = '❌ ' + err.message;
     errCard.style.display = 'block';
   } finally {
-    btn.textContent = 'Update Session';
+    btn.textContent = 'Mettre à jour';
     btn.disabled = false;
   }
 }
@@ -616,8 +636,9 @@ function adminCancelEdit() {
   document.getElementById('admin-duration').value = '';
   document.getElementById('admin-location').value = '';
   document.getElementById('admin-spots').value = '';
-  document.getElementById('admin-sport').value = '1';
-  document.getElementById('admin-create-btn').textContent = '+ Create Session';
+  const sportSelect = document.getElementById('admin-sport');
+  if (sportSelect.options.length > 0) sportSelect.selectedIndex = 0;
+  document.getElementById('admin-create-btn').textContent = '+ Créer une séance';
   document.getElementById('admin-create-btn').onclick = adminCreateSession;
   document.getElementById('admin-cancel-btn').style.display = 'none';
   document.getElementById('admin-api-error').style.display = 'none';
@@ -643,7 +664,7 @@ async function loadAdminAnnouncements() {
         <div class="admin-session-item" data-id="${a.id}">
           <div class="admin-session-info">
             <div class="admin-session-title">${escapeHTML(a.title)}</div>
-            <div class="admin-session-meta">Par ${escapeHTML(a.author)} — ${date}</div>
+            <div class="admin-session-meta">${escapeHTML(a.author)} — ${date}</div>
           </div>
           <div class="admin-session-actions">
             <button class="btn-admin-delete" onclick="adminDeleteAnnouncement(${a.id}, this)">Supprimer</button>
@@ -663,6 +684,7 @@ async function adminDeleteAnnouncement(id, btn) {
     await apiFetch('/announcements/' + id, { method: 'DELETE' });
     showToast('✅ Annonce supprimée', 'success');
     loadAdminAnnouncements();
+    loadAnnouncements();
   } catch (err) {
     showToast('❌ ' + err.message, 'error');
     btn.textContent = 'Supprimer';
@@ -704,7 +726,7 @@ async function loadAnnouncements() {
     const data = await apiFetch('/announcements');
     const announcements = data.announcements || [];
     if (!announcements.length) {
-      grid.innerHTML = `<div class="no-results" style="grid-column:1/-1"><div class="no-results-icon">📢</div><h3>Aucune annonce</h3><p>Soyez le premier à publier une annonce !</p></div>`;
+      grid.innerHTML = `<div class="no-results" style="grid-column:1/-1"><div class="no-results-icon">📢</div><h3>Aucune annonce</h3><p>Publiez votre première annonce !</p></div>`;
       return;
     }
     grid.innerHTML = announcements.map(a => {
@@ -847,7 +869,114 @@ async function submitProfileUpdate() {
   }
 }
 
+// ── FORGOT PASSWORD FUNCTIONS ──
+
+function validateForgotField() {
+  const v = document.getElementById('forgot-email').value;
+  const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  document.getElementById('forgot-email-error').textContent = v && !ok ? 'Email invalide' : '';
+  document.getElementById('forgot-email').className = v ? (ok ? 'input-ok' : 'input-error') : '';
+  return ok;
+}
+
+async function submitForgotPassword() {
+  const errCard = document.getElementById('forgot-api-error');
+  errCard.style.display = 'none';
+  const emailOk = validateForgotField();
+  const email = document.getElementById('forgot-email').value;
+  if (!email) {
+    document.getElementById('forgot-email-error').textContent = 'Email requis';
+    document.getElementById('forgot-email').className = 'input-error';
+    return;
+  }
+  if (!emailOk) return;
+  const btn = document.getElementById('forgot-btn');
+  btn.textContent = '⏳ Envoi...';
+  btn.disabled = true;
+  try {
+    await apiFetch('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+    showToast('📧 Si cet email existe, un lien de réinitialisation a été envoyé.', 'success');
+    showPage('login');
+  } catch (err) {
+    errCard.textContent = '❌ ' + err.message;
+    errCard.style.display = 'block';
+  } finally {
+    btn.textContent = 'Envoyer le lien';
+    btn.disabled = false;
+  }
+}
+
+// ── RESET PASSWORD FUNCTIONS ──
+
+let resetToken = null;
+
+function validateResetField(field) {
+  if (field === 'password') {
+    const v = document.getElementById('reset-password').value;
+    const ok = v.length >= 6;
+    document.getElementById('reset-password-error').textContent = v && !ok ? 'Minimum 6 caractères' : '';
+    document.getElementById('reset-password').className = v ? (ok ? 'input-ok' : 'input-error') : '';
+    if (document.getElementById('reset-confirm').value) validateResetField('confirm');
+    return ok;
+  }
+  if (field === 'confirm') {
+    const pw = document.getElementById('reset-password').value;
+    const v = document.getElementById('reset-confirm').value;
+    const ok = v === pw && v.length > 0;
+    document.getElementById('reset-confirm-error').textContent = v && !ok ? 'Les mots de passe ne correspondent pas' : '';
+    document.getElementById('reset-confirm').className = v ? (ok ? 'input-ok' : 'input-error') : '';
+    return ok;
+  }
+}
+
+async function submitResetPassword() {
+  const errCard = document.getElementById('reset-api-error');
+  const successCard = document.getElementById('reset-success');
+  errCard.style.display = 'none';
+  successCard.style.display = 'none';
+  const passOk = validateResetField('password');
+  const confirmOk = validateResetField('confirm');
+  const pass = document.getElementById('reset-password').value;
+  if (!pass) {
+    document.getElementById('reset-password-error').textContent = 'Mot de passe requis';
+    document.getElementById('reset-password').className = 'input-error';
+    return;
+  }
+  if (!passOk || !confirmOk) return;
+  const btn = document.getElementById('reset-btn');
+  btn.textContent = '⏳ Réinitialisation...';
+  btn.disabled = true;
+  try {
+    await apiFetch('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token: resetToken, password: pass })
+    });
+    successCard.textContent = '✅ Mot de passe réinitialisé ! Vous pouvez maintenant vous connecter.';
+    successCard.style.display = 'block';
+    document.getElementById('reset-password').value = '';
+    document.getElementById('reset-confirm').value = '';
+    document.getElementById('reset-password').className = '';
+    document.getElementById('reset-confirm').className = '';
+    showToast('✅ Mot de passe modifié avec succès !', 'success');
+    setTimeout(() => showPage('login'), 2000);
+  } catch (err) {
+    errCard.textContent = '❌ ' + err.message;
+    errCard.style.display = 'block';
+  } finally {
+    btn.textContent = 'Réinitialiser';
+    btn.disabled = false;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('page') === 'reset-password' && params.get('token')) {
+    resetToken = params.get('token');
+    showPage('reset-password');
+  }
   updateNav();
   loadFeatured();
   observeCounters();

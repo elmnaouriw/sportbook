@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentions légales — SportBook</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+    .legal-page { max-width: 720px; margin: 0 auto; padding: 100px 24px 60px; }
+    .legal-page h1 { font-family: 'Sora', sans-serif; font-size: 2rem; margin-bottom: 8px; }
+    .legal-page h2 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--text); }
+    .legal-page p, .legal-page li { color: var(--sub); line-height: 1.7; }
+    .legal-page ul { padding-left: 20px; }
+    .legal-page a { color: var(--primary); text-decoration: underline; cursor: pointer; }
+    .back-link { display: inline-block; margin-top: 40px; color: var(--primary); text-decoration: none; font-weight: 500; cursor: pointer; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="legal-page">
+    <h1>Mentions légales</h1>
+    <p>Dernière mise à jour : juin 2026</p>
+
+    <h2>1. Éditeur du site</h2>
+    <p>
+      SportBook est un projet réalisé dans le cadre de la formation<br />
+      <strong>Titre professionnel DWWM (Développeur Web et Web Mobile)</strong><br />
+      dispensée par <strong>MolenGeek</strong>.
+    </p>
+    <p>
+      Étudiant : <strong>[Ton nom]</strong><br />
+      Email : <strong>[ton.email@exemple.com]</strong><br />
+      GitHub : <strong>github.com/[ton-compte]/sportbook</strong>
+    </p>
+
+    <h2>2. Directeur de publication</h2>
+    <p>[Ton nom], étudiant DWWM — MolenGeek.</p>
+
+    <h2>3. Hébergement</h2>
+    <p>
+      Le site est hébergé localement à des fins de démonstration.<br />
+      En production, l'application serait déployée sur une plateforme telle que
+      Railway, Render, ou un VPS OVH.
+    </p>
+
+    <h2>4. Propriété intellectuelle</h2>
+    <p>
+      L'ensemble du code source, du design et des contenus présents sur ce site
+      est librement réutilisable dans le cadre pédagogique.
+      Toute exploitation commerciale nécessite l'accord préalable de l'auteur.
+    </p>
+
+    <h2>5. Protection des données</h2>
+    <p>
+      Les données collectées (nom, email) sont utilisées uniquement dans le cadre
+      du fonctionnement de l'application (création de compte, réservation de séances).
+      Aucune donnée n'est revendue à des tiers.
+    </p>
+    <p>
+      Conformément au RGPD, vous pouvez demander la suppression de vos données
+      en contactant l'éditeur du site.
+    </p>
+
+    <h2>6. Cookies</h2>
+    <p>
+      SportBook utilise un token JWT stocké dans le <code>localStorage</code>
+      du navigateur pour gérer les sessions utilisateur. Aucun cookie tiers
+      n'est utilisé.
+    </p>
+
+    <a class="back-link" onclick="window.location.href='index.html'">← Retour à l'accueil</a>
+  </div>
+</body>
+</html>

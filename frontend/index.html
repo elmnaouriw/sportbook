@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,12 +18,12 @@
     <span>SportBook</span>
   </a>
   <div class="nav-links">
-    <a id="nav-home" class="active" onclick="showPage('home')">Home</a>
-    <a id="nav-sessions" onclick="showPage('sessions')">Sessions</a>
+    <a id="nav-home" class="active" onclick="showPage('home')">Accueil</a>
+    <a id="nav-sessions" onclick="showPage('sessions')">Séances</a>
     <a id="nav-announcements" onclick="showAnnouncementsPage()" style="display:none">Annonces</a>
     <a id="nav-bookings" onclick="goToBookings()" style="display:none">Mes réservations</a>
     <a id="nav-profile" onclick="showProfilePage()" style="display:none">Mon profil</a>
-    <a id="nav-admin" onclick="showAdminPage()" style="display:none">Admin</a>
+    <a id="nav-admin" onclick="showAdminPage()" style="display:none">Administration</a>
   </div>
   <div class="nav-actions" id="nav-actions"></div>
 </nav>
@@ -31,13 +31,13 @@
 <!-- ═══ HOME PAGE ═══ -->
 <div id="page-home" class="page active">
   <section class="hero">
-    <h1 class="reveal">Book your sport sessions easily</h1>
-    <p class="reveal reveal-delay-1">Join thousands of members enjoying fitness, football, yoga, and more. Find and book your perfect session today.</p>
+    <h1 class="reveal">Réservez vos séances sportives facilement</h1>
+    <p class="reveal reveal-delay-1">Rejoignez des milliers de membres qui profitent du fitness, du football, du yoga et bien plus. Trouvez et réservez votre séance idéale dès aujourd'hui.</p>
     <div class="search-bar reveal reveal-delay-2">
       <div class="search-field">
-        <label>Sport Type</label>
+        <label>Sport</label>
         <select id="hero-sport">
-          <option value="">All Sports</option>
+          <option value="">Tous les sports</option>
           <option value="yoga">Yoga</option>
           <option value="cardio">Cardio</option>
           <option value="football">Football</option>
@@ -48,21 +48,21 @@
         <label>Date</label>
         <input type="date" id="hero-date" />
       </div>
-      <button class="btn-search" onclick="heroSearch()">🔍 Search</button>
+      <button class="btn-search" onclick="heroSearch()">🔍 Rechercher</button>
     </div>
   </section>
 
   <div class="stats">
-    <div class="stat reveal"><div class="stat-icon">👥</div><div class="stat-number" data-target="2500" data-suffix="+">0</div><div class="stat-label">Active Members</div></div>
-    <div class="stat reveal reveal-delay-1"><div class="stat-icon">📅</div><div class="stat-number" data-target="500" data-suffix="+">0</div><div class="stat-label">Sessions Monthly</div></div>
-    <div class="stat reveal reveal-delay-2"><div class="stat-icon">🏅</div><div class="stat-number" data-target="15" data-suffix="+">0</div><div class="stat-label">Sport Types</div></div>
-    <div class="stat reveal reveal-delay-3"><div class="stat-icon">📈</div><div class="stat-number" data-target="98" data-suffix="%">0</div><div class="stat-label">Satisfaction Rate</div></div>
+    <div class="stat reveal"><div class="stat-icon">👥</div><div class="stat-number" data-target="2500" data-suffix="+">0</div><div class="stat-label">Membres actifs</div></div>
+    <div class="stat reveal reveal-delay-1"><div class="stat-icon">📅</div><div class="stat-number" data-target="500" data-suffix="+">0</div><div class="stat-label">Séances par mois</div></div>
+    <div class="stat reveal reveal-delay-2"><div class="stat-icon">🏅</div><div class="stat-number" data-target="15" data-suffix="+">0</div><div class="stat-label">Sports proposés</div></div>
+    <div class="stat reveal reveal-delay-3"><div class="stat-icon">📈</div><div class="stat-number" data-target="98" data-suffix="%">0</div><div class="stat-label">Taux de satisfaction</div></div>
   </div>
 
   <section class="content">
     <div class="section-header reveal">
-      <div><h2>Featured Sessions</h2><p>Popular sessions happening this week</p></div>
-      <button class="btn-view-all" onclick="showPage('sessions')">View All Sessions</button>
+      <div><h2>Séances à la une</h2><p>Les séances populaires de cette semaine</p></div>
+      <button class="btn-view-all" onclick="showPage('sessions')">Voir toutes les séances</button>
     </div>
     <div class="cards-grid" id="featured-cards">
       <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:55%"></div><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:100%;height:40px;margin-top:8px"></div></div>
@@ -73,21 +73,21 @@
   </section>
 
   <section class="why-section">
-    <h2 class="reveal">Why Choose SportBook?</h2>
-    <p class="reveal reveal-delay-1">We make it easy to stay active and reach your fitness goals</p>
+    <h2 class="reveal">Pourquoi choisir SportBook ?</h2>
+    <p class="reveal reveal-delay-1">Nous rendons la pratique sportive simple et accessible à tous</p>
     <div class="features-grid">
-      <div class="feature-card reveal reveal-delay-1"><div class="feature-icon">⚡</div><h3>Easy Booking</h3><p>Book your sessions in seconds with our simple and intuitive platform</p></div>
-      <div class="feature-card reveal reveal-delay-2"><div class="feature-icon">👥</div><h3>Expert Instructors</h3><p>Train with certified professionals who are passionate about your success</p></div>
-      <div class="feature-card reveal reveal-delay-3"><div class="feature-icon">❤️</div><h3>Flexible Schedule</h3><p>Wide variety of sessions at different times to fit your lifestyle</p></div>
+      <div class="feature-card reveal reveal-delay-1"><div class="feature-icon">⚡</div><h3>Réservation facile</h3><p>Réservez vos séances en quelques clics grâce à notre plateforme intuitive</p></div>
+      <div class="feature-card reveal reveal-delay-2"><div class="feature-icon">👥</div><h3>Coachs experts</h3><p>Entraînez-vous avec des professionnels certifiés passionnés par votre réussite</p></div>
+      <div class="feature-card reveal reveal-delay-3"><div class="feature-icon">❤️</div><h3>Planning flexible</h3><p>Une large variété de séances à différents horaires pour s'adapter à votre rythme</p></div>
     </div>
   </section>
 
-  <div class="cta-banner reveal">
-    <h2>Ready to Get Started?</h2>
-    <p>Join our community today and start your fitness journey</p>
+  <div class="cta-banner reveal" id="cta-banner">
+    <h2>Prêt à commencer ?</h2>
+    <p>Rejoignez notre communauté dès aujourd'hui et lancez-vous</p>
     <div class="cta-buttons">
-      <button class="btn-cta-white" onclick="showPage('register')">Create Account</button>
-      <button class="btn-cta-outline" onclick="showPage('sessions')">Browse Sessions</button>
+      <button class="btn-cta-white" onclick="showPage('register')">Créer un compte</button>
+      <button class="btn-cta-outline" onclick="showPage('sessions')">Parcourir les séances</button>
     </div>
   </div>
 </div>
@@ -95,23 +95,23 @@
 <!-- ═══ SESSIONS PAGE ═══ -->
 <div id="page-sessions" class="page">
   <div class="sessions-header">
-    <h1>Browse Sessions</h1>
-    <p>Find and book your perfect sport session</p>
+    <h1>Parcourir les séances</h1>
+    <p>Trouvez et réservez votre séance sportive idéale</p>
   </div>
   <div class="filters-box">
-    <div class="filters-title">▼ Filters</div>
+    <div class="filters-title">▼ Filtres</div>
     <div class="filters-row">
       <div class="filter-field">
-        <label>Search</label>
+        <label>Recherche</label>
         <div class="input-icon-wrap">
           <span class="input-icon">🔍</span>
-          <input type="text" id="filter-search" placeholder="Search sessions or instructors..." oninput="filterSessions()" />
+          <input type="text" id="filter-search" placeholder="Rechercher une séance ou un coach..." oninput="filterSessions()" />
         </div>
       </div>
       <div class="filter-field">
-        <label>Sport Type</label>
+        <label>Sport</label>
         <select id="filter-sport" onchange="filterSessions()">
-          <option value="">All Sports</option>
+          <option value="">Tous les sports</option>
           <option value="yoga">Yoga</option>
           <option value="cardio">Cardio</option>
           <option value="football">Football</option>
@@ -125,7 +125,7 @@
     </div>
   </div>
   <div id="sessions-api-error" style="display:none" class="api-error">⚠️ <span id="sessions-error-msg"></span></div>
-  <div class="sessions-count">Showing <strong id="sessions-count-num">...</strong> sessions</div>
+  <div class="sessions-count"><strong id="sessions-count-num">...</strong> séance(s) trouvée(s)</div>
   <div class="sessions-grid" id="sessions-grid">
     <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:55%"></div><div class="skeleton skeleton-line" style="width:100%;height:40px;margin-top:8px"></div></div>
     <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:70%;height:18px"></div><div class="skeleton skeleton-line" style="width:55%"></div><div class="skeleton skeleton-line" style="width:100%;height:40px;margin-top:8px"></div></div>
@@ -176,9 +176,9 @@
   <div class="bookings-header">
     <div>
       <h1>Mes réservations</h1>
-      <p>Retrouvez toutes vos sessions réservées</p>
+      <p>Retrouvez toutes vos séances réservées</p>
     </div>
-    <button class="btn-view-all" onclick="showPage('sessions')">+ Réserver une session</button>
+    <button class="btn-view-all" onclick="showPage('sessions')">+ Réserver une séance</button>
   </div>
   <div id="bookings-api-error" style="display:none" class="api-error">⚠️ <span id="bookings-error-msg"></span></div>
   <div class="bookings-count" id="bookings-count" style="display:none">
@@ -230,34 +230,29 @@
 <!-- ═══ ADMIN PAGE ═══ -->
 <div id="page-admin" class="page">
   <div class="admin-header">
-    <h1>Admin Dashboard</h1>
-    <p>Create and manage sport sessions</p>
+    <h1>Tableau de bord administrateur</h1>
+    <p>Créez et gérez les séances sportives</p>
   </div>
 
   <div class="admin-layout">
     <div class="admin-card admin-form-card">
-      <h2>Create a Session</h2>
+      <h2>Créer une séance</h2>
       <div id="admin-api-error" class="api-error-card" style="display:none"></div>
       <div class="admin-form">
         <div class="form-row">
           <div class="form-group">
-            <label>Title</label>
-            <input type="text" id="admin-title" placeholder="Morning Yoga Flow" />
+            <label>Titre</label>
+            <input type="text" id="admin-title" placeholder="Ex : Yoga du matin" />
           </div>
           <div class="form-group">
             <label>Sport</label>
-            <select id="admin-sport">
-              <option value="1">Yoga</option>
-              <option value="2">Cardio</option>
-              <option value="3">Football</option>
-              <option value="4">Fitness</option>
-            </select>
+            <select id="admin-sport"></select>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Instructor</label>
-            <input type="text" id="admin-instructor" placeholder="Sarah Johnson" />
+            <label>Coach</label>
+            <input type="text" id="admin-instructor" placeholder="Nom du coach" />
           </div>
           <div class="form-group">
             <label>Date</label>
@@ -270,29 +265,29 @@
             <input type="time" id="admin-time" />
           </div>
           <div class="form-group">
-            <label>Duration (min)</label>
+            <label>Durée (min)</label>
             <input type="number" id="admin-duration" placeholder="60" min="15" />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Location</label>
-            <input type="text" id="admin-location" placeholder="Studio A" />
+            <label>Lieu</label>
+            <input type="text" id="admin-location" placeholder="Ex : Studio A" />
           </div>
           <div class="form-group">
-            <label>Total Spots</label>
+            <label>Places totales</label>
             <input type="number" id="admin-spots" placeholder="20" min="1" />
           </div>
         </div>
         <div class="admin-form-actions">
-          <button class="btn-submit" id="admin-create-btn" onclick="adminCreateSession()">+ Create Session</button>
-          <button class="btn-cancel" id="admin-cancel-btn" onclick="adminCancelEdit()" style="display:none">Cancel</button>
+          <button class="btn-submit" id="admin-create-btn" onclick="adminCreateSession()">+ Créer une séance</button>
+          <button class="btn-cancel" id="admin-cancel-btn" onclick="adminCancelEdit()" style="display:none">Annuler</button>
         </div>
       </div>
     </div>
 
     <div class="admin-card admin-list-card">
-      <h2>All Sessions</h2>
+      <h2>Toutes les séances</h2>
       <div id="admin-sessions-list">
         <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>
         <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line" style="width:40%"></div></div>
@@ -314,23 +309,72 @@
   <div class="auth-page">
     <div class="auth-logo"><div class="auth-logo-icon">🏅</div><span>SportBook</span></div>
     <div class="auth-card">
-      <h2>Welcome Back</h2>
-      <p>Sign in to access your account</p>
+      <h2>Bon retour</h2>
+      <p>Connectez-vous pour accéder à votre compte</p>
       <div id="login-api-error" class="api-error-card" style="display:none"></div>
       <div class="form-group">
-        <label>Email Address</label>
-        <div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="login-email" placeholder="you@example.com" oninput="validateLoginField('email')" /></div>
+        <label>Adresse email</label>
+        <div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="login-email" placeholder="vous@exemple.com" oninput="validateLoginField('email')" /></div>
         <span class="field-error" id="login-email-error"></span>
       </div>
       <div class="form-group">
-        <label>Password</label>
+        <label>Mot de passe</label>
         <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="login-password" placeholder="••••••••" oninput="validateLoginField('password')" /></div>
         <span class="field-error" id="login-password-error"></span>
       </div>
-      <button class="btn-submit" id="login-btn" onclick="submitLogin()">→ Sign In</button>
-      <div class="auth-link">Don't have an account? <a onclick="showPage('register')">Create account</a></div>
+      <button class="btn-submit" id="login-btn" onclick="submitLogin()">→ Se connecter</button>
+      <div class="auth-link">
+        <a onclick="showPage('forgot-password')">Mot de passe oublié ?</a> &middot;
+        Pas encore de compte ? <a onclick="showPage('register')">Créer un compte</a>
+      </div>
     </div>
-    <a class="back-link" onclick="showPage('home')">← Back to home</a>
+    <a class="back-link" onclick="showPage('home')">← Retour à l'accueil</a>
+  </div>
+</div>
+
+<!-- ═══ FORGOT PASSWORD PAGE ═══ -->
+<div id="page-forgot-password" class="page">
+  <div class="auth-page">
+    <div class="auth-logo"><div class="auth-logo-icon">🏅</div><span>SportBook</span></div>
+    <div class="auth-card">
+      <h2>Réinitialisation du mot de passe</h2>
+      <p>Entrez votre email et nous vous enverrons un lien de réinitialisation</p>
+      <div id="forgot-api-error" class="api-error-card" style="display:none"></div>
+      <div class="form-group">
+        <label>Adresse email</label>
+        <div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="forgot-email" placeholder="vous@exemple.com" oninput="validateForgotField('email')" /></div>
+        <span class="field-error" id="forgot-email-error"></span>
+      </div>
+      <button class="btn-submit" id="forgot-btn" onclick="submitForgotPassword()">Envoyer le lien</button>
+      <div class="auth-link"><a onclick="showPage('login')">← Retour à la connexion</a></div>
+    </div>
+    <a class="back-link" onclick="showPage('home')">← Retour à l'accueil</a>
+  </div>
+</div>
+
+<!-- ═══ RESET PASSWORD PAGE ═══ -->
+<div id="page-reset-password" class="page">
+  <div class="auth-page">
+    <div class="auth-logo"><div class="auth-logo-icon">🏅</div><span>SportBook</span></div>
+    <div class="auth-card">
+      <h2>Choisir un nouveau mot de passe</h2>
+      <p>Saisissez votre nouveau mot de passe ci-dessous</p>
+      <div id="reset-api-error" class="api-error-card" style="display:none"></div>
+      <div id="reset-success" class="api-error-card" style="display:none;background:#dcfce7;color:#166534;border-color:#86efac"></div>
+      <div class="form-group">
+        <label>Nouveau mot de passe</label>
+        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reset-password" placeholder="Minimum 6 caractères" oninput="validateResetField('password')" /></div>
+        <span class="field-error" id="reset-password-error"></span>
+      </div>
+      <div class="form-group">
+        <label>Confirmer le mot de passe</label>
+        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reset-confirm" placeholder="Confirmer le mot de passe" oninput="validateResetField('confirm')" /></div>
+        <span class="field-error" id="reset-confirm-error"></span>
+      </div>
+      <button class="btn-submit" id="reset-btn" onclick="submitResetPassword()">Réinitialiser</button>
+      <div class="auth-link"><a onclick="showPage('login')">← Retour à la connexion</a></div>
+    </div>
+    <a class="back-link" onclick="showPage('home')">← Retour à l'accueil</a>
   </div>
 </div>
 
@@ -339,65 +383,76 @@
   <div class="auth-page">
     <div class="auth-logo"><div class="auth-logo-icon">🏅</div><span>SportBook</span></div>
     <div class="auth-card">
-      <h2>Create Account</h2>
-      <p>Join SportBook and start your fitness journey</p>
+      <h2>Créer un compte</h2>
+      <p>Rejoignez SportBook et commencez votre parcours sportif</p>
       <div id="reg-api-error" class="api-error-card" style="display:none"></div>
       <div class="form-group">
-        <label>Full Name</label>
-        <div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="reg-name" placeholder="John Doe" oninput="validateRegField('name')" /></div>
+        <label>Nom complet</label>
+        <div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="reg-name" placeholder="Jean Dupont" oninput="validateRegField('name')" /></div>
         <span class="field-error" id="reg-name-error"></span>
       </div>
       <div class="form-group">
-        <label>Email Address</label>
-        <div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="reg-email" placeholder="you@example.com" oninput="validateRegField('email')" /></div>
+        <label>Adresse email</label>
+        <div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="reg-email" placeholder="vous@exemple.com" oninput="validateRegField('email')" /></div>
         <span class="field-error" id="reg-email-error"></span>
       </div>
       <div class="form-group">
-        <label>Password</label>
+        <label>Mot de passe</label>
         <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-password" placeholder="••••••••" oninput="validateRegField('password')" /></div>
         <div class="password-strength"><div class="password-strength-bar" id="pw-strength-bar"></div></div>
         <span class="field-error" id="reg-password-error"></span>
       </div>
       <div class="form-group">
-        <label>Confirm Password</label>
+        <label>Confirmer le mot de passe</label>
         <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-confirm" placeholder="••••••••" oninput="validateRegField('confirm')" /></div>
         <span class="field-error" id="reg-confirm-error"></span>
       </div>
       <div class="form-group">
-        <label>Account Type</label>
+        <label>Type de compte</label>
         <div class="role-selector">
           <label class="role-option" id="role-user-label">
             <input type="radio" name="role" value="user" checked onchange="validateRegField('role')" />
             <div class="role-card">
               <span class="role-icon">👤</span>
-              <span class="role-label">User</span>
-              <span class="role-desc">Book sessions</span>
+              <span class="role-label">Utilisateur</span>
+              <span class="role-desc">Réserver des séances</span>
             </div>
           </label>
           <label class="role-option" id="role-admin-label">
             <input type="radio" name="role" value="admin" onchange="validateRegField('role')" />
             <div class="role-card">
               <span class="role-icon">🛠️</span>
-              <span class="role-label">Admin</span>
-              <span class="role-desc">Post announcements</span>
+              <span class="role-label">Administrateur</span>
+              <span class="role-desc">Publier des annonces</span>
             </div>
           </label>
         </div>
       </div>
       <div class="checkbox-row">
         <input type="checkbox" id="terms" onchange="validateRegField('terms')" />
-        <label for="terms">I agree to the <a>Terms of Service</a> and <a>Privacy Policy</a></label>
+        <label for="terms">J'accepte les <a href="cgu.html" target="_blank">Conditions d'utilisation</a> et la <a href="mentions-legales.html" target="_blank">Politique de confidentialité</a></label>
       </div>
       <span class="field-error" id="reg-terms-error" style="display:block;margin-top:-16px;margin-bottom:16px;"></span>
-      <button class="btn-submit" id="reg-btn" onclick="submitRegister()">👤 Create Account</button>
-      <div class="auth-link">Already have an account? <a onclick="showPage('login')">Sign in</a></div>
+      <button class="btn-submit" id="reg-btn" onclick="submitRegister()">👤 Créer mon compte</button>
+      <div class="auth-link">Déjà un compte ? <a onclick="showPage('login')">Se connecter</a></div>
     </div>
-    <a class="back-link" onclick="showPage('home')">← Back to home</a>
+    <a class="back-link" onclick="showPage('home')">← Retour à l'accueil</a>
   </div>
 </div>
 
-<!-- Décommentez et modifiez pour changer l'URL de l'API en production -->
-<!-- <script>window.__API_URL__ = 'http://localhost:3000/api';</script> -->
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="mentions-legales.html" target="_blank">Mentions légales</a>
+      <a href="cgu.html" target="_blank">CGU</a>
+      <a href="https://github.com/julyahery/sportbook" target="_blank">GitHub</a>
+    </div>
+    <p class="footer-copy">© 2026 SportBook — Projet DWWM MolenGeek</p>
+  </div>
+</footer>
+
+<!-- URLs API : chemin relatif car le frontend est servi par Express en production -->
+<script>window.__API_URL__ = '/api';</script>
 <script src="app.js"></script>
 </body>
 </html>
