@@ -7,9 +7,9 @@
 | US-001 | Visiteur | M'inscrire avec nom, email et mot de passe | Créer un compte et accéder à l'application | ✅ Fait |
 | US-002 | Utilisateur | Me connecter avec email et mot de passe | Accéder à mon espace personnel | ✅ Fait |
 | US-003 | Utilisateur | Rester connecté entre les sessions | Ne pas avoir à me reconnecter à chaque visite | ✅ Fait |
-| US-004 | Utilisateur | Me déconnecter | Sécuriser mon compte | ✅ Fait (côté client) |
+| US-004 | Utilisateur | Me déconnecter | Sécuriser mon compte | ✅ Fait (blacklist en DB) |
 | US-005 | Utilisateur | Consulter et modifier mon profil | Mettre à jour mes informations personnelles | ✅ Fait |
-| US-006 | Utilisateur | Réinitialiser mon mot de passe via email | Récupérer l'accès à mon compte si j'oublie mon mot de passe | ❌ Manquant |
+| US-006 | Utilisateur | Réinitialiser mon mot de passe via email | Récupérer l'accès à mon compte si j'oublie mon mot de passe | ✅ Fait (nodemailer + fallback console) |
 
 ## Epic 2 : Consultation des séances sportives
 
@@ -37,7 +37,7 @@
 | ID   | En tant que... | Je veux... | Afin de... | Statut |
 |------|---------------|------------|------------|--------|
 | US-018 | Administrateur | Créer une nouvelle séance sportive | Proposer de nouvelles activités aux utilisateurs | ✅ Fait |
-| US-019 | Administrateur | Modifier une séance existante | Mettre à jour les informations (date, coach, places...) | ❌ Manquant |
+| US-019 | Administrateur | Modifier une séance existante | Mettre à jour les informations (date, coach, places...) | ✅ Fait |
 | US-020 | Administrateur | Supprimer une séance | Retirer une séance qui n'a plus lieu | ✅ Fait |
 | US-021 | Administrateur | Voir la liste des séances avec leurs statistiques | Piloter l'offre sportive | ⚠️ Partiel (page admin avec liste + places, sans graphiques) |
 | US-022 | Administrateur | Voir le tableau de bord des réservations | Suivre le taux de remplissage | ❌ Manquant |
@@ -46,11 +46,11 @@
 
 | ID   | En tant que... | Je veux... | Afin de... | Statut |
 |------|---------------|------------|------------|--------|
-| US-023 | Administrateur | Voir la liste des utilisateurs inscrits | Gérer les comptes | ❌ Manquant |
-| US-024 | Administrateur | Modifier le rôle d'un utilisateur | Promouvoir un utilisateur en administrateur | ❌ Manquant |
-| US-025 | Administrateur | Supprimer / désactiver un compte utilisateur | Gérer les abus ou comptes inactifs | ❌ Manquant |
-| US-026 | Administrateur | Voir les réservations de tous les utilisateurs | Superviser l'activité globale | ❌ Manquant |
-| US-027 | Administrateur | Annuler une réservation pour un utilisateur | Gérer les cas exceptionnels | ❌ Manquant |
+| US-023 | Administrateur | Voir la liste des utilisateurs inscrits | Gérer les comptes | ✅ Fait |
+| US-024 | Administrateur | Modifier le rôle d'un utilisateur | Promouvoir un utilisateur en administrateur | ✅ Fait |
+| US-025 | Administrateur | Supprimer / désactiver un compte utilisateur | Gérer les abus ou comptes inactifs | ✅ Fait |
+| US-026 | Administrateur | Voir les réservations de tous les utilisateurs | Superviser l'activité globale | ✅ Fait |
+| US-027 | Administrateur | Annuler une réservation pour un utilisateur | Gérer les cas exceptionnels | ✅ Fait |
 
 ## Epic 6 : Interface & Expérience Utilisateur
 
@@ -72,19 +72,19 @@
 | US-036 | Développeur | Que les routes admin soient protégées par vérification de rôle | Limiter les actions critiques aux administrateurs | ✅ Fait |
 | US-037 | Développeur | Que les requêtes SQL soient paramétrées | Prévenir les injections SQL | ✅ Fait |
 | US-038 | Développeur | Valider les formulaires côté client et serveur | Assurer l'intégrité des données | ✅ Fait |
-| US-039 | Développeur | Avoir un endpoint de déconnexion côté serveur | Gérer les sessions proprement (invalidation de token) | ❌ Manquant |
+| US-039 | Développeur | Avoir un endpoint de déconnexion côté serveur | Gérer les sessions proprement (invalidation de token) | ✅ Fait |
 | US-040 | Développeur | Avoir des tests unitaires sur les fonctions principales | Assurer la fiabilité du code | ❌ Manquant |
 | US-041 | Développeur | Avoir des tests fonctionnels sur les scénarios utilisateur | Valider le parcours complet | ❌ Manquant |
 | US-042 | Développeur | Avoir des tests de sécurité (auth, accès admin) | Prévenir les failles | ❌ Manquant |
-| US-043 | Développeur | Déployer l'application sur une plateforme web | La rendre accessible publiquement | ❌ Manquant |
+| US-043 | Développeur | Déployer l'application sur une plateforme web | La rendre accessible publiquement | ✅ Fait (Dockerfile) |
 | US-044 | Développeur| Centraliser la gestion des erreurs API | Avoir des messages d'erreur cohérents | ❌ Manquant |
 
 ## Epic 8 : Pages légales & Informationnelles
 
 | ID   | En tant que... | Je veux... | Afin de... | Statut |
 |------|---------------|------------|------------|--------|
-| US-045 | Utilisateur | Accéder aux mentions légales | Connaître les informations juridiques | ❌ Manquant |
-| US-046 | Utilisateur | Accéder aux conditions générales d'utilisation | Connaître mes droits et obligations | ❌ Manquant |
+| US-045 | Utilisateur | Accéder aux mentions légales | Connaître les informations juridiques | ✅ Fait |
+| US-046 | Utilisateur | Accéder aux conditions générales d'utilisation | Connaître mes droits et obligations | ✅ Fait |
 
 ## Epic 9 : Qualité & Maintenance du code
 

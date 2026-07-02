@@ -14,3 +14,5 @@
 
 ## Rappels
 - Toujours lire le fichier de skill avant de l'utiliser.
+
+Et bien du coup c'est la première fois que je faisais certaines de ces choses là parce que jusqu'à présent j'utilisais l'IA dans le navigateur et là je suis passé à open code pour justement être un peu plus efficace. On a également regardé comment faire une skill pour pouvoir mettre à jour le journal de bord lorsqu'on fait des commit. Aussi le fait de mettre sous format markdown la documentation. Alors que jusqu'à présent je faisais les choses essentiellement avec une discussion de mon navigateur et je copiais-collais les choses sur mon ordinateur par la suite.

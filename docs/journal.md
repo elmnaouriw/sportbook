@@ -135,6 +135,88 @@
 - Tests de sécurité (US-042)
 - Déploiement (Docker / VPS)
 
+## 2026-06-18 (5e session)
+### Réalisations
+- **US-006 — Mot de passe oublié** :
+  - Backend : endpoints `POST /api/auth/forgot-password` et `POST /api/auth/reset-password`
+  - Backend : table `password_reset_tokens` en BDD (token hash, expiration, flag used)
+  - Backend : installation de `nodemailer` pour l'envoi d'emails
+  - Backend : fallback console quand SMTP non configuré (affiche le lien dans les logs)
+  - Frontend : page "Forgot Password" avec formulaire email
+  - Frontend : page "Reset Password" avec nouveau mot de passe (token dans l'URL)
+  - Frontend : lien "Forgot password?" dans la page de connexion
+  - `.env.example` : ajout des variables SMTP (Mailtrap recommandé en dev)
+- **Tests E2E frontend avec Cypress** :
+  - Installation et configuration de Cypress 15.17.0
+  - 12 tests E2E couvrant : page d'accueil, navigation, login, register, forgot-password, reset-password
+  - Scripts `test:e2e` (headless) et `test:e2e:open` (GUI) dans package.json racine
+
+### Décisions
+- Nodemailer avec fallback console : pas de SMTP obligatoire en dev, le lien s'affiche dans la console serveur ; en prod, config SMTP via `.env`
+- Token de reset : hash SHA-256 stocké en BDD (jamais le token en clair), expiration 1h, flag `used` pour usage unique
+- Cypress plutôt que Playwright : plus simple à setup pour un projet vanilla JS, écosystème mature
+
+### Compétences transversales
+- Autonomie : implémentation complète de deux features distinctes (reset password + tests E2E) en une session
+- Veille technique : découverte de nodemailer pour l'envoi d'emails, configuration SMTP
+
+### Prochaines étapes
+- Tests de sécurité (US-042)
+- Navigation clavier (US-032) et accessibilité (US-033)
+
+## 2026-07-02 (6e session)
+### Réalisations
+- **i18n — Internationalisation du frontend** :
+  - Traduction complète anglais → français de l'interface (boutons, labels, messages, dates, navigation, placeholders)
+  - Format 24h (remplacement AM/PM) et dates françaises (31 janv. 2026)
+  - Adaptation des textes dans `app.js`, `index.html` et `style.css`
+- **Responsive design (US-028)** :
+  - Media queries pour tablette (max 1024px) : grille 2 colonnes, navigation adaptée
+  - Media queries pour mobile (max 640px) : grille 1 colonne, menu compact, empilement vertical
+  - Amélioration de l'affichage des formulaires, cards, et sections sur petits écrans
+- **Footer + pages légales (US-045, US-046)** :
+  - Footer avec liens Mentions légales, CGU, GitHub
+  - Pages `cgu.html` et `mentions-legales.html` complètes
+  - Lien vers CGU et mentions légales dans le formulaire d'inscription
+- **Améliorations UX** :
+  - CTA banner masqué quand l'utilisateur est connecté
+  - Redirection automatique des pages auth (login/register/forgot/reset) si déjà connecté
+  - Message d'erreur amélioré sur les bookings avec préfixe "Erreur :"
+  - `loadSports()` dynamique avec fallback en dur si API indisponible
+- **Infrastructure backend** :
+  - ErrorHandler centralisé (AppError class + middleware Express)
+  - Routes admin CRUD : GET/PUT/DELETE users, GET/DELETE bookings (US-023/024/025/026/027)
+  - Route `GET /api/sports` pour chargement dynamique de la liste des sports
+  - Mode production : `express.static` sert le frontend, catch-all SPA pour le routing
+  - Export `ready` promise dans `db.js` : le serveur attend l'initialisation BDD avant d'écouter
+  - Fix division par zéro dans `sessions_view` (protection `WHEN s.total_spots > 0`)
+- **Déploiement (US-043)** :
+  - Dockerfile multi-stage (node:20-alpine, npm ci, production)
+  - docker-compose.yml avec service MySQL 8.0 (port 3307) + API (port 3000)
+  - Root `package.json` avec scripts `dev`, `test`, `test:e2e`, `start`, `install:all`
+  - `.env.production.example` pour déploiement Alwaysdata
+  - API URL en relatif (`/api`) au lieu de localhost:3000
+- **Tests (US-040, US-041, US-042)** :
+  - Tests unitaires Jest : auth middleware, errorHandler, health check (11 tests)
+  - Tests E2E Cypress : accueil, navigation, login, register, forgot-password, reset-password (12 tests)
+
+### Problèmes rencontrés
+- Aucun problème majeur sur cette session — les fonctionnalités étaient déjà implémentées, il s'agissait surtout de finalisation (i18n, responsive, packaging)
+
+### Décisions
+- Traduction complète en français plutôt que support multilingue : le projet est pour un marché francophone, pas besoin de i18n library
+- API URL en relatif (`/api`) en production : le frontend est servi par Express, pas besoin d'URL absolue
+- Fallback console pour nodemailer : pas de SMTP en dev, le lien s'affiche dans les logs
+
+### Compétences transversales
+- Organisation : regroupement de toutes les fonctionnalités implémentées en sessions précédentes en 3 commits logiques
+- Autonomie : implémentation du responsive design sans framework CSS
+- Rigueur : synchronisation de `database.sql` avec le schéma runtime, ajout des pages légales manquantes
+
+### Prochaines étapes
+- Tests de sécurité (US-042)
+- Navigation clavier (US-032) et accessibilité (US-033)
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans

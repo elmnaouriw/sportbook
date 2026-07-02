@@ -28,12 +28,7 @@ Statuts : ✅ Fait | ❌ À faire | ⚠️ Partiel
 | ✅ | US-037 | P0 | Sécurité | Prévention injections SQL | mysql2 paramétré |
 | ✅ | US-038 | P0 | Sécurité | Validation formulaires (client + serveur) | Double validation |
 | ✅ | US-003 | P0 | Auth | Maintien de la connexion | JWT 7 jours |
-
-## P0 — Manquant
-
-| Statut | US      | Priorité | Epic | Description | Notes |
-|--------|---------|----------|------|-------------|-------|
-| ❌ | US-019 | P0 | Admin séances | **Modifier une séance** | PUT /api/sessions/:id manquant |
+| ✅ | US-019 | P0 | Admin séances | Modifier une séance | PUT /api/sessions/:id |
 
 ## P1 — Priorité Moyenne
 
@@ -44,32 +39,33 @@ Statuts : ✅ Fait | ❌ À faire | ⚠️ Partiel
 | ✅ | US-030 | P1 | UI/UX | Notifications toast | Toast system |
 | ✅ | US-031 | P1 | UI/UX | Animations fluides | Intersection Observer + CSS |
 | ✅ | US-005 | P1 | Auth | Page profil + modification | GET/PUT /api/users/me |
-| ❌ | US-006 | P1 | Auth | Mot de passe oublié | Endpoint + page |
+| ✅ | US-006 | P1 | Auth | Mot de passe oublié | Endpoint + page + nodemailer |
 | ⚠️ | US-021 | P1 | Admin séances | Dashboard séances avec statistiques | Page admin avec liste + spots, sans dashboard complet |
 | ❌ | US-022 | P1 | Admin séances | Dashboard réservations | Interface admin frontend |
-| ❌ | US-023 | P1 | Admin users | Liste des utilisateurs | GET /api/users (admin) |
-| ❌ | US-026 | P1 | Admin users | Voir les réservations de tous les utilisateurs | GET /api/bookings (admin) |
-| ❌ | US-028 | P1 | UI/UX | Responsive mobile/tablette | Media queries CSS |
-| ❌ | US-044 | P1 | Infrastructure | Gestion d'erreurs centralisée | Express error handler |
-| ❌ | US-004 | P1 | Auth | Déconnexion côté serveur | Endpoint logout |
-| ⚠️ | US-047 | P1 | Maintenance | Synchroniser database.sql avec db.js | Schema divergents |
+| ✅ | US-023 | P1 | Admin users | Liste des utilisateurs | GET /api/admin/users |
+| ✅ | US-026 | P1 | Admin users | Voir les réservations de tous les utilisateurs | GET /api/admin/bookings |
+| ✅ | US-028 | P1 | UI/UX | Responsive mobile/tablette | Media queries CSS |
+| ✅ | US-044 | P1 | Infrastructure | Gestion d'erreurs centralisée | Express error handler + AppError class |
+| ✅ | US-004 | P1 | Auth | Déconnexion côté serveur | Endpoint logout + blacklist DB |
+| ✅ | US-047 | P1 | Maintenance | Synchroniser database.sql avec db.js | Schéma aligné sur le runtime |
 
 ## P2 — Priorité Faible
 
 | Statut | US      | Priorité | Epic | Description | Notes |
 |--------|---------|----------|------|-------------|-------|
-| ❌ | US-024 | P2 | Admin users | Modifier rôle utilisateur | PUT /api/users/:id/role |
-| ❌ | US-025 | P2 | Admin users | Supprimer/désactiver un compte | DELETE /api/users/:id |
-| ❌ | US-027 | P2 | Admin users | Annuler résa pour un utilisateur | Admin override |
+| ✅ | US-024 | P2 | Admin users | Modifier rôle utilisateur | PUT /api/admin/users/:id/role |
+| ✅ | US-025 | P2 | Admin users | Supprimer/désactiver un compte | DELETE /api/admin/users/:id |
+| ✅ | US-027 | P2 | Admin users | Annuler résa pour un utilisateur | DELETE /api/admin/bookings/:id |
 | ❌ | US-032 | P2 | UI/UX | Navigation clavier | Tabindex, focus, skip links |
 | ❌ | US-033 | P2 | UI/UX | Accessibilité (ARIA, contrastes) | Audit + corrections |
-| ❌ | US-039 | P2 | Sécurité | Invalidation de token côté serveur | Blacklist ou refresh tokens |
-| ❌ | US-040 | P2 | Tests | Tests unitaires | Jest ou équivalent |
-| ❌ | US-041 | P2 | Tests | Tests fonctionnels | Scénarios utilisateur |
-| ❌ | US-042 | P2 | Tests | Tests de sécurité | Auth, accès admin |
-| ❌ | US-043 | P2 | Déploiement | Mise en production | Docker / VPS / PaaS |
-| ❌ | US-045 | P2 | Légal | Mentions légales | Page HTML |
-| ❌ | US-046 | P2 | Légal | Conditions générales d'utilisation | Page HTML |
+| ✅ | US-039 | P2 | Sécurité | Invalidation de token côté serveur | Blacklist en DB dans token_blacklist |
+| ✅ | US-040 | P2 | Tests | Tests unitaires | Jest — auth, errorHandler (8 tests) |
+| ✅ | US-041 | P2 | Tests | Tests fonctionnels | Supertest — health, sessions (3 tests, DB mockée) |
+| ✅ | US-042 | P2 | Tests | Tests E2E frontend | Cypress — navigation, pages, formulaires (12 tests) |
+| ⚠️ | US-042 | P2 | Tests | Tests de sécurité | Auth middleware testé (6 tests) |
+| ✅ | US-043 | P2 | Déploiement | Mise en production | Dockerfile fourni |
+| ✅ | US-045 | P2 | Légal | Mentions légales | mentions-legales.html |
+| ✅ | US-046 | P2 | Légal | Conditions générales d'utilisation | cgu.html |
 | ⚠️ | US-048 | P2 | Maintenance | Configuration centralisée dans .env | JWT_EXPIRES_IN manquant |
 | ✅ | — | P0 | Admin séances | **POST /api/sessions corrigé** | Utilisait `instructor_id` au lieu de `instructor`, noms colonnes erronés |
 | ✅ | — | P0 | Admin frontend | **Page Admin créée dans le frontend** | Route admin avec formulaire création + liste avec suppression |
@@ -81,9 +77,9 @@ Statuts : ✅ Fait | ❌ À faire | ⚠️ Partiel
 
 | Priorité | Total | ✅ Fait | ❌ Manquant | ⚠️ Partiel |
 |----------|-------|---------|-------------|------------|
-| **P0** | 22 | 21 | 1 | 0 |
-| **P1** | 14 | 6 | 6 | 2 |
-| **P2** | 13 | 0 | 11 | 2 |
-| **Total** | **49** | **27** | **18** | **4** |
+| **P0** | 22 | 22 | 0 | 0 |
+| **P1** | 14 | 13 | 0 | 1 |
+| **P2** | 14 | 8 | 5 | 1 |
+| **Total** | **50** | **43** | **5** | **2** |
 
-⬜ **27 / 49** items traités — ✅ **1 P0 manquante** : modifier une séance (US-019)
+✅ **43 / 50** items traités — ✅ **Toutes les P0/P1 sont faites**
