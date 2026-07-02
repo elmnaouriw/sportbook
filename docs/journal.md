@@ -238,6 +238,17 @@
 - Tests de sécurité (US-042)
 - Navigation clavier (US-032) et accessibilité (US-033)
 
+## 2026-07-02 (8e session)
+### Réalisations
+- Renseignement des informations personnelles dans les mentions légales (nom, email, GitHub)
+
+### Compétences transversales
+- Utilisation d'opencode en CLI pour la première fois (passage de l'IA dans le navigateur à un outil en ligne de commande)
+
+### Prochaines étapes
+- Tests de sécurité (US-042)
+- Navigation clavier (US-032) et accessibilité (US-033)
+
 ## Avant 2026-06-16
 - J'ai fais un brief et des tests au niveau de l'interface en utilisant Claude dans le navigateur
 - J'ai installé sur ma machine XAMPP pour faire fonctionner la base de donnée et avoir PHPMYADMIN inclus dedans
