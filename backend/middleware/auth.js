@@ -1,19 +1,28 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const db = require('../config/db');
 
-const tokenBlacklist = new Set();
-
-function addToBlacklist(token) {
+async function addToBlacklist(token) {
   const hash = crypto.createHash('sha256').update(token).digest('hex');
-  tokenBlacklist.add(hash);
+  try {
+    await db.query('INSERT IGNORE INTO token_blacklist (token_hash) VALUES (?)', [hash]);
+  } catch (err) {
+    console.error('Erreur blacklist:', err);
+  }
 }
 
-function isBlacklisted(token) {
+async function isBlacklisted(token) {
   const hash = crypto.createHash('sha256').update(token).digest('hex');
-  return tokenBlacklist.has(hash);
+  try {
+    const [rows] = await db.query('SELECT id FROM token_blacklist WHERE token_hash = ?', [hash]);
+    return rows.length > 0;
+  } catch (err) {
+    console.error('Erreur vérification blacklist:', err);
+    return false;
+  }
 }
 
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
   const header = req.headers['authorization'];
   if (!header || !header.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token manquant ou invalide' });
@@ -23,7 +32,7 @@ function authMiddleware(req, res, next) {
   try {
     req.user = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (isBlacklisted(token)) {
+    if (await isBlacklisted(token)) {
       return res.status(401).json({ error: 'Token expiré ou invalide' });
     }
 

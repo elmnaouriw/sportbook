@@ -57,6 +57,18 @@ CREATE TABLE IF NOT EXISTS token_blacklist (
   INDEX idx_token_hash (token_hash)
 ) ENGINE=InnoDB;
 
+-- ── PASSWORD RESET TOKENS ──────────────────
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  email       VARCHAR(150)  NOT NULL,
+  token_hash  VARCHAR(64)   NOT NULL,
+  expires_at  DATETIME      NOT NULL,
+  used        TINYINT(1)    DEFAULT 0,
+  created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_token_hash (token_hash),
+  INDEX idx_email (email)
+) ENGINE=InnoDB;
+
 -- ── ANNOUNCEMENTS ──────────────────────────
 CREATE TABLE IF NOT EXISTS announcements (
   id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -84,10 +96,14 @@ SELECT
   sp.name       AS sport_name,
   IFNULL(COUNT(b.id), 0)                                AS booked_spots,
   s.total_spots - IFNULL(COUNT(b.id), 0)                AS available_spots,
-  ROUND(IFNULL(COUNT(b.id), 0) / s.total_spots * 100)   AS fill_pct,
   CASE
+    WHEN s.total_spots > 0 THEN ROUND(IFNULL(COUNT(b.id), 0) / s.total_spots * 100)
+    ELSE 0
+  END AS fill_pct,
+  CASE
+    WHEN s.total_spots = 0 THEN 'full'
     WHEN IFNULL(COUNT(b.id), 0) >= s.total_spots THEN 'full'
-    WHEN IFNULL(COUNT(b.id), 0) / s.total_spots >= 0.8 THEN 'almost_full'
+    WHEN s.total_spots > 0 AND IFNULL(COUNT(b.id), 0) / s.total_spots >= 0.8 THEN 'almost_full'
     ELSE 'available'
   END AS status
 FROM sessions s

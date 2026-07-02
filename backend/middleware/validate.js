@@ -65,6 +65,17 @@ const updateProfileValidation = [
   handleValidation
 ];
 
+const forgotPasswordValidation = [
+  body('email').isEmail().normalizeEmail().withMessage('Email invalide'),
+  handleValidation
+];
+
+const resetPasswordValidation = [
+  body('token').notEmpty().withMessage('Token requis'),
+  body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit faire au moins 6 caractères'),
+  handleValidation
+];
+
 module.exports = {
   registerValidation,
   loginValidation,
@@ -72,5 +83,7 @@ module.exports = {
   updateSessionValidation,
   createBookingValidation,
   createAnnouncementValidation,
-  updateProfileValidation
+  updateProfileValidation,
+  forgotPasswordValidation,
+  resetPasswordValidation
 };

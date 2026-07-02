@@ -19,9 +19,13 @@ async function initializeDatabase() {
     const connection = await mysql.createConnection(dbConfig);
     console.log('🔌 Connexion au serveur MySQL réussie...');
 
-    // 2. Création de la base de données
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
-    console.log(`📦 Base de données "${dbName}" vérifiée/créée.`);
+    // 2. Création de la base de données (optionnel — déjà créée sur Alwaysdata)
+    try {
+      await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+      console.log(`📦 Base de données "${dbName}" vérifiée/créée.`);
+    } catch {
+      console.log(`ℹ️  Base "${dbName}" déjà existante ou création non autorisée, on continue...`);
+    }
 
    
 
@@ -89,7 +93,21 @@ async function initializeDatabase() {
       ) ENGINE=InnoDB;
     `);
 
-    // 9. Création Table ANNOUNCEMENTS
+    // 9. Création Table PASSWORD_RESET_TOKENS
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS \`password_reset_tokens\` (
+        \`id\` INT AUTO_INCREMENT PRIMARY KEY,
+        \`email\` VARCHAR(150) NOT NULL,
+        \`token_hash\` VARCHAR(64) NOT NULL,
+        \`expires_at\` DATETIME NOT NULL,
+        \`used\` TINYINT(1) DEFAULT 0,
+        \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_token_hash (\`token_hash\`),
+        INDEX idx_email (\`email\`)
+      ) ENGINE=InnoDB;
+    `);
+
+    // 10. Création Table ANNOUNCEMENTS
     await connection.query(`
       CREATE TABLE IF NOT EXISTS \`announcements\` (
         \`id\` INT AUTO_INCREMENT PRIMARY KEY,
@@ -102,7 +120,7 @@ async function initializeDatabase() {
       ) ENGINE=InnoDB;
     `);
 
-    // 10. Création / Remplacement de la VUE SQL
+    // 11. Création / Remplacement de la VUE SQL
     await connection.query(`
   CREATE OR REPLACE VIEW \`sessions_view\` AS
   SELECT 
@@ -119,10 +137,14 @@ async function initializeDatabase() {
     sp.name       AS sport_name,
     IFNULL(COUNT(b.id), 0)                                    AS booked_spots,
     s.total_spots - IFNULL(COUNT(b.id), 0)                    AS available_spots,
-    ROUND(IFNULL(COUNT(b.id), 0) / s.total_spots * 100)       AS fill_pct,
     CASE
+      WHEN s.total_spots > 0 THEN ROUND(IFNULL(COUNT(b.id), 0) / s.total_spots * 100)
+      ELSE 0
+    END AS fill_pct,
+    CASE
+      WHEN s.total_spots = 0 THEN 'full'
       WHEN IFNULL(COUNT(b.id), 0) >= s.total_spots THEN 'full'
-      WHEN IFNULL(COUNT(b.id), 0) / s.total_spots >= 0.8 THEN 'almost_full'
+      WHEN s.total_spots > 0 AND IFNULL(COUNT(b.id), 0) / s.total_spots >= 0.8 THEN 'almost_full'
       ELSE 'available'
     END AS status
   FROM \`sessions\` s
@@ -131,7 +153,7 @@ async function initializeDatabase() {
   GROUP BY s.id;
 `);
 
-    // 11. Injection des données de test si la table sports est vide
+    // 12. Injection des données de test si la table sports est vide
     const [rows] = await connection.query('SELECT id FROM sports LIMIT 1');
     if (rows.length === 0) {
       console.log('🌱 Base vide. Injection des données de test...');
@@ -155,7 +177,7 @@ async function initializeDatabase() {
     // Fermer la connexion temporaire
     await connection.end();
 
-    // 11. Initialiser enfin le Pool final qui sera exporté vers l'application
+    // 13. Initialiser enfin le Pool final qui sera exporté vers l'application
     pool = mysql.createPool({
       ...dbConfig,
       database: dbName,
@@ -174,15 +196,14 @@ async function initializeDatabase() {
 }
 
 
-// Lancement de l'initialisation asynchrone
-initializeDatabase();
+// On exporte un proxy + une promesse ready pour que server.js attende l'initialisation
+const ready = initializeDatabase().then(() => true).catch(() => false);
 
-// On exporte un proxy ou une fonction d'accès pour s'assurer que le pool est utilisé après création
 module.exports = {
+  ready,
   query: async (sql, params) => {
     if (!pool) {
-      // Petit délai de sécurité si une requête arrive trop vite au démarrage
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await ready;
     }
     return pool.query(sql, params);
   }

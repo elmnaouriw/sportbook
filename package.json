@@ -1,0 +1,23 @@
+{
+  "name": "sportbook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application de réservation de séances sportives — Projet DWWM MolenGeek",
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install",
+    "dev:backend": "cd backend && npx nodemon server.js",
+    "dev:frontend": "cd frontend && npx live-server --port=5501 --no-browser",
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "test": "cd backend && npx jest --verbose",
+    "test:e2e": "npx cypress run --e2e",
+    "test:e2e:open": "npx cypress open --e2e",
+    "start": "cd backend && node server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "cypress": "^15.17.0"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}
